@@ -212,13 +212,7 @@ The frontend is built using **Vue.js** and is organized into modular views and r
 - **Flexibility**: Enables relationships between properties and multiple entities or litigation cases.
 - **Performance**: Indexes on `property_id` and `entity_id` optimize queries for `RiskDashboardView.vue`.
 
-## NEXT STEPS FOR PROKECT BUILD:
-1. Implement the `properties` table in `schema.sql` and create corresponding migration scripts.
-2. Populate `seeds/` with sample property data for testing.
-3. Update `api.js` and `routes/` to include property-related endpoints.
-4. Modify `AccountsView.vue` and `RiskDashboardView.vue` to integrate with the new properties API.
-5. Test analytics queries (e.g., top 10 properties with litigation) to ensure accuracy and performance.
-6. Consider adding additional attributes to the `properties` table (e.g., `value`, `risk_score`) for enhanced analytics.
+
 
 
 
