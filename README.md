@@ -2,7 +2,6 @@
 
 
 ```markdown
-# Consola360 Project Structure
 This document outlines the project structure for `consola360`, including both frontend and backend components with a focus on implementing a **dedicated relational table** in PostgreSQL for properties. 
 
 ## Project Structure
