@@ -8,6 +8,7 @@ This document outlines the project structure for `consola360`, including both fr
 ## Project Structure
 
 ```
+```markdown
 consola360/
 ├── src/                             # Frontend source code
 │   ├── views/                       # Vue.js view components
