@@ -1,372 +1,227 @@
+# Consola360 Project Structure
 
+
+```markdown
+# Consola360 Project Structure
+This document outlines the project structure for `consola360`, including both frontend and backend components with a focus on implementing a **dedicated relational table** in PostgreSQL for properties. 
+
+## Project Structure
+
+```
 consola360/
-├── src/
-│   ├── views/
-│       └── deal-360
-│            └── DealsView.vue (where the "Deals" table will live)
-│            └── LeadsView.vue (where the "Leads" table will live)
-│            └── Deal360ContractsView.vue (where the "contracts" table will live")
-│       └── legal-hub
-│           └── ContractsManagement.vue
-│           └── LegalIntelligence.vue
-│           └── LitigationCompliance.vue
-│           └── contracts/
-│                 └──ClauseRepository.vue
-│                 └──ContractGenerator.vue
-│             └── intelligence/
-│                 └──playbookstraining.vue
-│                 └──regulatoryfeed.vue
-│             └── litigation/
-│                 └── ActiveCases.vue
-│                 └── AssignedCases.vue
-│                 └── DisputeAnalytics.vue
-│                 └── LegalTimeline.vue
-│                 └── MatterIntake.vue
-│   │   ├── AccountsView.vue      ← Your main accounts page ✓
-│   │   ├── ContractsView.vue     ← Future contracts page
-│   │   ├── DealsView.vue     ← Future dashboard
-│   ├── components/
-│   │   ├── ui/
-│   │   │   ├── Modal.vue         ← Reusable modal component
-│   │   │   ├── Button.vue        ← Reusable button component
-│   │   │   └── Table.vue         ← Reusable table component
-│   │   ├── AccountForm.vue       ← Account form component
-│   ├── router/
-│   │   └── index.js              ← Route definitions
-│   └── services/
-│       └── api.js                ← API service layer
-├── database/
-│   ├── schema.sql
-│   └── seeds/
-└── backend/
-    └── server.js
+├── src/                             # Frontend source code
+│   ├── views/                       # Vue.js view components
+│   │   ├── deal-360/                # Deal-360 module
+│   │   │   ├── DealsView.vue        # Deals table view
+│   │   │   ├── LeadsView.vue        # Leads table view
+│   │   │   └── Deal360ContractsView.vue  # Contracts table view
+│   │   ├── legal-hub/               # Legal Hub module
+│   │   │   ├── ContractsManagement.vue  # Contracts management view
+│   │   │   ├── LegalIntelligence.vue    # Legal intelligence view
+│   │   │   ├── LitigationCompliance.vue # Litigation compliance view
+│   │   │   ├── contracts/           # Contracts sub-module
+│   │   │   │   ├── ClauseRepository.vue   # Clause repository view
+│   │   │   │   └── ContractGenerator.vue  # Contract generator view
+│   │   │   ├── intelligence/        # Intelligence sub-module
+│   │   │   │   ├── PlaybooksTraining.vue  # Playbooks and training view
+│   │   │   │   └── RegulatoryFeed.vue    # Regulatory feed view
+│   │   │   └── litigation/          # Litigation sub-module
+│   │   │       ├── ActiveCases.vue       # Active cases view
+│   │   │       ├── AssignedCases.vue     # Assigned cases view
+│   │   │       ├── DisputeAnalytics.vue  # Dispute analytics view
+│   │   │       ├── LegalTimeline.vue     # Legal timeline view
+│   │   │       └── MatterIntake.vue      # Matter intake view
+│   │   ├── AccountsView.vue         # Main accounts page
+│   │   ├── ContractsView.vue        # Future contracts page
+│   │   ├── DealsView.vue            # Future dashboard
+│   │   └── RiskDashboardView.vue    # Risk dashboard for aggregated analytics
+│   ├── components/                   # Reusable Vue components
+│   │   ├── ui/                      # UI component library
+│   │   │   ├── Modal.vue            # Reusable modal component
+│   │   │   ├── Button.vue           # Reusable button component
+│   │   │   └── Table.vue            # Reusable table component
+│   │   └── AccountForm.vue          # Account form component
+│   ├── router/                      # Vue router configuration
+│   │   └── index.js                 # Route definitions
+│   └── services/                    # API service layer
+│       └── api.js                   # API service layer
+├── database/                        # Database-related files
+│   ├── schema.sql                   # Database table definitions (including properties table)
+│   ├── migrations/                  # Database migrations (schema changes)
+│   ├── seeds/                       # Sample data for testing
+│   └── functions/                   # PostgreSQL stored functions
+└── backend/                         # Backend source code
+    ├── server.js                    # Main server file
+    ├── routes/                      # API route definitions
+    └── config/                      # Configuration files
+```
 
-BACKEND SET UP (PostgreSQL)
+## Frontend Overview
 
-── database/
-│   ├── schema.sql (table definitions)
-│   ├── migrations/ (database changes over time)
-│   ├── seeds/ (sample data)
-│   └── functions/ (PostgreSQL functions)
-└── backend/ (new folder we'll create)
-    ├── server.js
-    ├── routes/
-    └── config/
-    
-Phase 1: Database Architecture Setup
-1. Convert table CSVs to PostgreSQL Tables
-## ENUM vs VARCHAR: The Right Choice
+The frontend is built using **Vue.js** and is organized into modular views and reusable components:
 
-For fields with limited, predefined choices, ENUMs are superior because they:
-- **Enforce data integrity** (like legal precedents - only valid options allowed)
-- **Save storage space** 
-- **Prevent typos/inconsistencies**
-- **Make queries faster**
-- **Self-document the valid options**
+- **deal-360/**: Contains views for managing deals, leads, and contracts.
+- **legal-hub/**: Manages legal-related functionality, including contracts repository, contracts generator tool, risk intelligence, and litigation sub-modules.
+- **components/**: Reusable UI components (`Modal.vue`, `Button.vue`, `Table.vue`) and specific components like `AccountForm.vue`.
+- **router/**: Defines client-side routing using `index.js`.
+- **services/**: Handles API interactions via `api.js`.
 
-## Corrected Database Schema with ENUMs
+## Backend Setup (PostgreSQL)
 
-Here's your accounts table properly designed with ENUMs:
+The backend is powered by **PostgreSQL** and includes the following components:
+
+- **schema.sql**: Defines the database tables and structure.
+- **migrations/**: Manages database schema changes over time.
+- **seeds/**: Contains sample data for testing and development.
+- **functions/**: Stores PostgreSQL-specific functions for advanced database logic.
+- **server.js**: The main entry point for the backend server.
+- **routes/**: Defines the API endpoints for the application.
+- **config/**: Holds configuration settings for the backend (e.g., database connection details).
+
+## Key Component Descriptions
+
+### AccountsView.vue
+The `AccountsView.vue` serves as the main accounts page, acting as a centralized hub for managing entity-specific records (e.g., customers, vendors). It aggregates and stores records from the `Deals`, `Contracts`, and `Leads` tables under a master account for each specific entity. Properties data (e.g., company properties associated with the entity) is now stored in a separate `properties` table in PostgreSQL, linked to entities via foreign keys. This ensures that all related data for an entity is accessible while keeping property-specific data modular and scalable.
+
+### RiskDashboardView.vue
+The `RiskDashboardView.vue` provides a high-level overview of risk-related metrics across the platform. It aggregates data from multiple sources:
+- **Pending Contracts**: Total number of pending contracts from `Deal360ContractsView.vue`.
+- **Pending Deals**: Total number of pending deals from `DealsView.vue`.
+- **Active Legal Matters**: Data on active legal cases pulled from the `ActiveCases.vue` table in the litigation module.
+- **Property Breakdown**: Analytics on all properties from the `properties` table, including:
+  - Top 10 company properties with the most active litigation.
+  - Breakdown of litigation by case type (e.g., 60% contract disputes, 40% IP breaches).
+
+This dashboard leverages the `properties` table for efficient querying of property-specific analytics, enabling users to prioritize and address high-risk areas.
+
+## Backend Setup (PostgreSQL)
+
+The backend is powered by **PostgreSQL** and includes a dedicated `properties` table for enhanced modularity and analytics. The database structure includes:
+
+- **schema.sql**: Defines the database tables, including the new `properties` table and relationships with other tables (e.g., `accounts`, `active_cases`).
+- **migrations/**: Manages database schema changes over time, including the addition of the `properties` table.
+- **seeds/**: Contains sample data for testing, including sample properties and their relationships.
+- **functions/**: Stores PostgreSQL-specific functions for advanced database logic (e.g., aggregating litigation data by property).
+- **server.js**: The main entry point for the backend server.
+- **routes/**: Defines API endpoints, including new endpoints for property-specific queries.
+- **config/**: Holds configuration settings for the backend (e.g., database connection details).
+
+### Properties Table Schema
+Below is a sample schema for the `properties` table, defined in `schema.sql`:
 
 ```sql
--- database/phase1_accounts_with_enums.sql
-
--- Create the ENUM types first
-CREATE TYPE account_type_enum AS ENUM ('customer', 'vendor', 'partner', 'competitor', 'prospect');
-
-CREATE TYPE industry_enum AS ENUM (
-    'technology', 'finance', 'healthcare', 'retail', 'manufacturing', 
-    'legal', 'consulting', 'real_estate', 'education', 'government',
-    'non_profit', 'entertainment', 'telecommunications', 'energy', 'other'
+CREATE TABLE properties (
+    property_id SERIAL PRIMARY KEY,
+    entity_id INTEGER REFERENCES accounts(entity_id) ON DELETE CASCADE,
+    property_name VARCHAR(255) NOT NULL,
+    property_type VARCHAR(100), -- e.g., office, warehouse, retail
+    location VARCHAR(255),      -- e.g., city, state, or address
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TYPE risk_level_enum AS ENUM ('low', 'medium', 'high', 'critical');
-
-CREATE TYPE account_status_enum AS ENUM ('active', 'inactive', 'prospect', 'churned', 'on_hold');
-
--- Your specific ENUMs from your data
-CREATE TYPE enum_sector AS ENUM (
-    'employment', 'entertainment', 'finance', 'marketing', 'medical', 
-    'retail', 'services', 'software', 'technology', 'telecommunications'
+-- Example relationship with active_cases (litigation)
+CREATE TABLE active_cases (
+    case_id SERIAL PRIMARY KEY,
+    property_id INTEGER REFERENCES properties(property_id) ON DELETE SET NULL,
+    case_type VARCHAR(100) NOT NULL, -- e.g., contract_dispute, ip_breach
+    status VARCHAR(50) NOT NULL,     -- e.g., active, pending, closed
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TYPE enum_office_location AS ENUM (
-    'Belgium', 'Brazil', 'China', 'Germany', 'Italy', 'Japan', 'Jordan', 
-    'Kenya', 'Korea', 'Norway', 'Panama', 'Philippines', 'Poland', 'Romania', 'United States'
-);
-
-CREATE TYPE enum_subsidiary_of AS ENUM (
-    'Acme Corporation', 'Bubba Gump', 'Golddex', 'Inity', 'Massive Dynamic', 'Sonron', 'Warephase'
-);
-
--- Now create the table with proper ENUM columns
-CREATE TABLE accounts (
-    id SERIAL PRIMARY KEY,
-    company_name VARCHAR(255) NOT NULL,
-    
-    -- Use ENUMs instead of VARCHAR for controlled fields
-    account_type account_type_enum NOT NULL,
-    industry industry_enum,
-    sector enum_sector,
-    office_location enum_office_location,
-    subsidiary_of enum_subsidiary_of,
-    account_status account_status_enum DEFAULT 'active',
-    
-    -- Financial info
-    annual_revenue VARCHAR(50), -- Could also be NUMERIC if you want calculations
-    
-    -- Contact info
-    primary_contact VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    phone VARCHAR(50),
-    website VARCHAR(500), -- URLs can be longer
-    
-    -- Location
-    headquarters_location TEXT, -- Free text for full address
-    
-    -- Scores (constrained integers)
-    risk_score INTEGER DEFAULT 50 CHECK (risk_score >= 0 AND risk_score <= 100),
-    health_score INTEGER DEFAULT 75 CHECK (health_score >= 0 AND health_score <= 100),
-    
-    -- Additional info
-    notes TEXT,
-    
-    -- Audit fields
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    created_by VARCHAR(255),
-    
-    -- Add some useful constraints
-    CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
-    CONSTRAINT unique_company_email UNIQUE (company_name, email)
-);
-
--- Create an index for faster searches
-CREATE INDEX idx_accounts_company_name ON accounts (company_name);
-CREATE INDEX idx_accounts_account_type ON accounts (account_type);
-CREATE INDEX idx_accounts_industry ON accounts (industry);
+-- Example index for performance
+CREATE INDEX idx_properties_entity_id ON properties(entity_id);
+CREATE INDEX idx_active_cases_property_id ON active_cases(property_id);
 ```
 
-## Frontend Integration: Dynamic Dropdowns
+**Key Features of the Properties Table**:
+- `property_id`: Unique identifier for each property.
+- `entity_id`: Foreign key linking to the `accounts` table, ensuring properties are associated with specific entities.
+- `property_name`, `property_type`, `location`: Core attributes for property data.
+- Indexes on `entity_id` and `property_id` for efficient querying in analytics (e.g., for `RiskDashboardView.vue`).
+- Relationship with `active_cases` to support litigation analytics by property.
 
-**The beauty of ENUMs:** You can query them dynamically for your Vue dropdowns!
-
-```javascript
-// backend/server.js - Add this route to get ENUM values
-app.get('/api/enums', async (req, res) => {
-  try {
-    const enumQueries = {
-      accountTypes: `
-        SELECT unnest(enum_range(NULL::account_type_enum)) as value
-      `,
-      industries: `
-        SELECT unnest(enum_range(NULL::industry_enum)) as value
-      `,
-      sectors: `
-        SELECT unnest(enum_range(NULL::enum_sector)) as value
-      `,
-      locations: `
-        SELECT unnest(enum_range(NULL::enum_office_location)) as value
-      `,
-      subsidiaries: `
-        SELECT unnest(enum_range(NULL::enum_subsidiary_of)) as value
-      `
-    };
-
-    const results = {};
-    for (const [key, query] of Object.entries(enumQueries)) {
-      const result = await pool.query(query);
-      results[key] = result.rows.map(row => row.value);
-    }
-
-    res.json(results);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+**Sample Query for RiskDashboardView.vue**:
+```sql
+-- Get top 10 properties with most active litigation, with case type breakdown
+SELECT 
+    p.property_id,
+    p.property_name,
+    COUNT(ac.case_id) AS total_cases,
+    JSON_AGG(
+        JSON_BUILD_OBJECT(
+            'case_type', ac.case_type,
+            'count', COUNT(ac.case_id) FILTER (WHERE ac.case_type = ac.case_type)
+        )
+    ) AS case_type_breakdown
+FROM properties p
+LEFT JOIN active_cases ac ON p.property_id = ac.property_id
+WHERE ac.status = 'active'
+GROUP BY p.property_id, p.property_name
+ORDER BY total_cases DESC
+LIMIT 10;
 ```
 
-## Updated AccountsView.vue with Dynamic ENUMs
+This query provides the top 10 properties with active litigation and a breakdown of case types (e.g., 60% contract disputes, 40% IP breaches).
 
-```vue
-<!-- In your AccountsView.vue template, update the form selects -->
-<template>
-  <!-- ... existing code ... -->
-  
-  <div class="form-group">
-    <label class="form-label">Account Type</label>
-    <select v-model="accountForm.accountType" class="form-select" required>
-      <option value="">Select account type</option>
-      <option 
-        v-for="type in enums.accountTypes" 
-        :key="type" 
-        :value="type"
-      >
-        {{ formatEnumValue(type) }}
-      </option>
-    </select>
-  </div>
+## Frontend Overview
 
-  <div class="form-group">
-    <label class="form-label">Industry</label>
-    <select v-model="accountForm.industry" class="form-select" required>
-      <option value="">Select industry</option>
-      <option 
-        v-for="industry in enums.industries" 
-        :key="industry" 
-        :value="industry"
-      >
-        {{ formatEnumValue(industry) }}
-      </option>
-    </select>
-  </div>
+The frontend is built using **Vue.js** and is organized into modular views and reusable components:
+- **deal-360/**: Manages deals, leads, and contracts.
+- **legal-hub/**: Manages legal-related functionality, including contracts, intelligence, and litigation sub-modules.
+- **AccountsView.vue**: Central hub for entity-specific data, linked to the `properties` table.
+- **RiskDashboardView.vue**: Visualizes risk metrics across contracts, deals, litigation, and properties.
+- **components/**: Reusable UI components (`Modal.vue`, `Button.vue`, `Table.vue`) and specific components like `AccountForm.vue`.
+- **router/**: Defines client-side routing using `index.js`.
+- **services/**: Handles API interactions via `api.js`, including new endpoints for the `properties` table.
 
-  <div class="form-group">
-    <label class="form-label">Sector</label>
-    <select v-model="accountForm.sector" class="form-select">
-      <option value="">Select sector</option>
-      <option 
-        v-for="sector in enums.sectors" 
-        :key="sector" 
-        :value="sector"
-      >
-        {{ formatEnumValue(sector) }}
-      </option>
-    </select>
-  </div>
+## Integration with Properties Table
 
-  <div class="form-group">
-    <label class="form-label">Office Location</label>
-    <select v-model="accountForm.officeLocation" class="form-select">
-      <option value="">Select location</option>
-      <option 
-        v-for="location in enums.locations" 
-        :key="location" 
-        :value="location"
-      >
-        {{ location }}
-      </option>
-    </select>
-  </div>
-
-  <!-- ... rest of form ... -->
-</template>
-
-<script setup>
-// Add to your existing script
-import { ref, computed, onMounted } from "vue"
-
-// Add enums state
-const enums = ref({
-  accountTypes: [],
-  industries: [],
-  sectors: [],
-  locations: [],
-  subsidiaries: []
-})
-
-// Load ENUMs on component mount
-onMounted(async () => {
-  try {
-    // Load accounts
-    const accountsResponse = await fetch('http://localhost:3001/api/accounts');
-    accounts.value = await accountsResponse.json();
-    
-    // Load ENUM values for dropdowns
-    const enumsResponse = await fetch('http://localhost:3001/api/enums');
-    enums.value = await enumsResponse.json();
-    
-  } catch (error) {
-    console.error('Failed to load data:', error);
-  }
-});
-
-// Helper function to format ENUM values for display
-function formatEnumValue(value) {
-  return value
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
-// Update your form structure to match ENUM fields
-const defaultAccountForm = {
-  companyName: '',
-  accountType: '',
-  industry: '',
-  sector: '',
-  officeLocation: '',
-  subsidiaryOf: '',
-  annualRevenue: '',
-  primaryContact: '',
-  email: '',
-  phone: '',
-  website: '',
-  headquartersLocation: '', // Renamed for clarity
-  riskScore: 50,
-  healthScore: 75,
-  notes: ''
-}
-</script>
-```
-
-## CSV to SQL Conversion with ENUMs
-
-When converting your CSV, you'll need to handle the ENUM values:
-
-```javascript
-// scripts/csv_to_sql_with_enums.js
-const fs = require('fs');
-const csv = require('csv-parser');
-
-const results = [];
-fs.createReadStream('data/accounts.csv')
-  .pipe(csv())
-  .on('data', (data) => results.push(data))
-  .on('end', () => {
-    const sqlInserts = results.map(row => {
-      // Sanitize and validate ENUM values
-      const accountType = row.account_type ? `'${row.account_type}'` : 'NULL';
-      const industry = row.industry ? `'${row.industry}'` : 'NULL';
-      const sector = row.sector ? `'${row.sector}'` : 'NULL';
-      const officeLocation = row.office_location ? `'${row.office_location}'` : 'NULL';
-      const subsidiaryOf = row.subsidiary_of ? `'${row.subsidiary_of}'` : 'NULL';
-      
-      return `
-INSERT INTO accounts (
-  company_name, account_type, industry, sector, office_location, subsidiary_of,
-  annual_revenue, primary_contact, email, phone, website, headquarters_location,
-  risk_score, health_score, notes
-) VALUES (
-  '${row.company_name}',
-  ${accountType}::account_type_enum,
-  ${industry}::industry_enum,
-  ${sector}::enum_sector,
-  ${officeLocation}::enum_office_location,
-  ${subsidiaryOf}::enum_subsidiary_of,
-  '${row.annual_revenue}',
-  '${row.primary_contact}',
-  '${row.email}',
-  '${row.phone}',
-  '${row.website}',
-  '${row.headquarters_location}',
-  ${row.risk_score || 50},
-  ${row.health_score || 75},
-  '${row.notes || ''}'
-);`;
-    }).join('\n');
-    
-    fs.writeFileSync('database/accounts_data_with_enums.sql', sqlInserts);
-    console.log('SQL file with ENUMs created!');
+### Backend Updates
+- **schema.sql**: Add the `properties` table and update related tables (e.g., `active_cases`) with foreign key relationships.
+- **migrations/**: Create a migration script to add the `properties` table and indexes.
+- **seeds/**: Include sample property data linked to entities and litigation cases.
+- **routes/**: Add API endpoints in `routes/` for property-related queries, e.g.:
+  ```javascript
+  // Example in routes/properties.js
+  router.get('/properties/top-litigation', async (req, res) => {
+      const query = `
+          SELECT p.property_id, p.property_name, COUNT(ac.case_id) as total_cases
+          FROM properties p
+          LEFT JOIN active_cases ac ON p.property_id = ac.property_id
+          WHERE ac.status = 'active'
+          GROUP BY p.property_id, p.property_name
+          ORDER BY total_cases DESC
+          LIMIT 10
+      `;
+      const result = await db.query(query);
+      res.json(result.rows);
   });
-```
+  ```
+- **api.js**: Update the API service layer to fetch property data for `AccountsView.vue` and `RiskDashboardView.vue`.
 
-## Benefits for Your Legal Use Case
+### Frontend Updates
+- **AccountsView.vue**: Update to fetch and display property data via API calls to the `properties` table, linked to entities.
+- **RiskDashboardView.vue**: Query the new properties API endpoints to display analytics, such as top 10 properties with litigation and case type breakdowns.
+- **components/Table.vue**: Ensure the reusable table component supports dynamic rendering of property and litigation data.
 
-1. **Data Integrity**: Like legal statutes - only valid values allowed
-2. **Consistency**: No "Technology" vs "tech" vs "Tech" variations
-3. **Easy Updates**: Add new ENUM values as your business grows
-4. **Better Queries**: `WHERE account_type = 'customer'` is faster than LIKE operations
-5. **Self-Documenting**: The ENUM definition shows all valid business categories
+## Benefits of Dedicated Properties Table
+- **Modularity**: Separates property data from customer and vendor employee data, improving maintainability.
+- **Scalability**: Supports complex queries for analytics (e.g., litigation by property, case type breakdowns).
+- **Flexibility**: Enables relationships between properties and multiple entities or litigation cases.
+- **Performance**: Indexes on `property_id` and `entity_id` optimize queries for `RiskDashboardView.vue`.
 
-**Your approach is spot-on!** Always use ENUMs for controlled vocabularies in legal/business applications.
+## NEXT STEPS FOR PROKECT BUILD:
+1. Implement the `properties` table in `schema.sql` and create corresponding migration scripts.
+2. Populate `seeds/` with sample property data for testing.
+3. Update `api.js` and `routes/` to include property-related endpoints.
+4. Modify `AccountsView.vue` and `RiskDashboardView.vue` to integrate with the new properties API.
+5. Test analytics queries (e.g., top 10 properties with litigation) to ensure accuracy and performance.
+6. Consider adding additional attributes to the `properties` table (e.g., `value`, `risk_score`) for enhanced analytics.
+
+
+
+
+
+
+
