@@ -1,5 +1,4 @@
-# Consola360 Project Structure
-
+## Consola360 Project Structure
 
 ```markdown
 This document outlines the project structure for `consola360`, including both frontend and backend components.
@@ -55,6 +54,130 @@ consola360/
     ├── routes/                      # API route definitions
     └── config/                      # Configuration files
 ```
+Tools and Technologies Used
+
+The consola360 application is a combined CRM/CLM platform with built-in legal risk analytics and visual dashboards, empowering executives and sales teams with actionable insights to predict risky deals without relying on the legal department. Below is an overview of the tools and coding languages used, along with their specific roles in the project.1. Vue.js (Frontend Framework)Role: Vue.js powers the interactive frontend, including views like AccountsView.vue, RiskDashboardView.vue, and DealsView.vue in src/views/.
+Purpose: Builds dynamic dashboards and CRM interfaces to display real-time data on accounts, deals, contracts, and risk analytics.
+Enables visualization of legal risk metrics (e.g., top properties with litigation) for executives and sales teams.
+Integrates with the backend via src/services/api.js to fetch and render data from PostgreSQL.
+
+Example Usage: RiskDashboardView.vue uses Vue.js to visualize pending deals, contracts, and active legal matters, aiding decision-making.
+
+2. Node.js (Backend Runtime)Role: Node.js runs the backend server (backend/server.js) and handles API requests, email monitoring, and data processing.
+Purpose:Manages CRM/CLM workflows, including email monitoring (backend/services/emailMonitor.js) to detect contract-related emails.
+Supports API endpoints in backend/routes/ for accessing accounts, contracts, and analytics data.
+Facilitates integration with AI services for risk analysis.
+
+Example Usage: The emailMonitor.js script processes incoming contracts and triggers database updates for real-time CRM tracking.
+
+3. PostgreSQL with EDB Postgres AI (Database and AI Engine)Role: PostgreSQL, enhanced with EDB Postgres AI, serves as the relational database for CRM/CLM data (e.g., accounts, deals, contracts) and provides AI-driven analytics.
+Purpose:Data Storage: Stores structured data in tables like accounts, contracts, properties, and contract_analysis (defined in database/schema.sql).
+Automation: Uses triggers (database/functions/contract_triggers.sql) to automate workflows, such as flagging risky deals or queuing AI analysis.
+Risk Analytics: Leverages EDB Postgres AI to run AI models in-database for legal risk assessments, reducing reliance on legal departments.
+Dashboards: Supports queries for visual dashboards, e.g., litigation breakdowns by property in RiskDashboardView.vue.
+
+Example Usage: The properties table links to active_cases for analytics on risky deals, displayed in executive dashboards.
+
+4. JavaScript (Primary Programming Language)Role: JavaScript is used across frontend and backend components for logic, UI interactions, and API communication.
+Purpose:Frontend: Powers Vue.js components for CRM/CLM interfaces and dashboard visualizations.
+Backend: Drives Node.js scripts for server logic, email processing, and API interactions (src/services/api.js).
+
+Example Usage: In AccountsView.vue, JavaScript handles real-time updates of account data from the database.
+
+5. Axios (HTTP Client)Role: Axios facilitates HTTP requests from the Vue.js frontend to the Node.js backend.
+Purpose:Fetches CRM/CLM data (e.g., accounts, contracts) and risk analytics for display in dashboards.
+Simplifies error handling for seamless user experience.
+
+Example Usage: apiService.getAccounts() in AccountsView.vue retrieves data for CRM tracking.
+
+6. IMAP and Mailparser (Email Processing Libraries)Role: These Node.js libraries in backend/services/emailMonitor.js monitor and process contract-related emails.
+Purpose:Detects incoming contracts and updates the contracts table, triggering CRM and risk analysis workflows.
+Supports automated deal tracking by integrating email data into the system.
+
+Example Usage: Filters attachments (e.g., PDFs) and saves them for AI analysis, linking to deals in the database.
+
+7. SQL (Database Query Language)Role: SQL defines and queries the PostgreSQL database structure and analytics.
+Purpose:Creates tables and triggers in database/schema.sql and database/functions/.
+Enables complex queries for risk dashboards, e.g., top 10 properties with litigation.
+
+Example Usage: Queries aggregate litigation data for RiskDashboardView.vue.
+
+8. JSONB (PostgreSQL Data Type)Role: JSONB stores structured AI analysis results in the contract_analysis table.
+Purpose:Holds risk assessments and key findings for visual dashboards.
+Supports flexible querying for legal risk insights.
+
+Example Usage: Stores data like {"risk_level": "high", "issue": "Unlimited liability"}.
+
+9. Python (via EDB Postgres AI)Role: Python, integrated via plpython3u, runs AI functions within PostgreSQL.
+Purpose:Executes in-database AI logic for risk analysis, reducing external dependencies.
+Supports future AI model development (Phase 2).
+
+Example Usage: The classify_contract_type function categorizes contracts for risk flagging.
+
+AI Integration (Phase 3 of 3)The consola360 project is structured in three phases, with the current focus on building the database (Phase 1) and planning AI model development (Phase 2). Phase 3, outlined below, implements the AI-driven workflow for the deal-to-contract process, aligning with the consola360.com vision of automated legal risk analytics and dashboards. Phase 2 will involve creating AI models for each step, to be developed after the database is complete.Project PhasesPhase 1: Database Architecture Setup (Current)Building PostgreSQL tables (accounts, contracts, properties, etc.) in database/schema.sql.
+Implementing triggers and migrations for CRM/CLM workflows.
+
+Phase 2: AI Model Development (Future)Creating specialized AI models for each step of the deal-to-contract workflow (e.g., Clause Extractor, Clause Analyzer).
+To be implemented after database completion, using tools like Ollama and EDB Postgres AI.
+
+Phase 3: AI Integration and Workflow (Current Focus)Integrating AI agents into the CRM/CLM system for automated risk analysis and dashboard updates.
+
+Consola360 Clause Intelligence Workflow (Phase 3)This workflow automates the deal-to-contract process, extracting clauses, identifying risks, and providing redlined suggestions for executives and sales teams. Contracts are sent to contracts@consola360.com, triggering the following AI-driven steps:Step 1: Clause Extractor (AI Agent #1)Tools: Lightweight LLM (e.g., LLaMA or Claude instance).
+Process:Parses raw contract text (PDF, DOCX, etc.) into discrete clauses.
+Recognizes visual separators (numbering, indentation, headers).
+Segments by logic (e.g., even clauses embedded in body text are isolated).
+
+Output: JSON of {clause_id, raw_text, position_in_contract}.
+Next Stage: Passes clauses to Clause Identifier.
+
+Step 2: Clause Identifier (AI Agent #2)Tools: AI classifier (fine-tuned or zero-shot prompt).
+Process:Maps each clause to a clause type (e.g., Indemnity, Insurance, Payment Terms, IP Ownership).
+Uses metadata + deal context to narrow match (contract type, jurisdiction, etc.).
+Flags unknown or compound clauses for fallback human review.
+
+Output: {clause, type, original_text, confidence_score}.
+Next Stage: Passes identified clauses to Clause Analyzer.
+
+Step 3: Clause Analyzer (Risk Intelligence Layer + GREP Safety Scan) (AI Agent #3)Tools: Company Clause Repository (in Firebase if compatible w/ rest of project), Large Language Model (e.g., Ollama model), grep engine for deterministic string-level validation.
+Process:Compares clause text against:Company-approved clauses from similar contracts in repository.
+Jurisdiction-specific rules (e.g., TX indemnity law).
+Role-based redline playbooks (Sales, Procurement, etc.).
+
+Finds risk phrases (e.g., “unlimited liability,” “waiver of subrogation”).
+Detects missing required language (e.g., “COI must be provided”).
+Flags ambiguous legal constructs.
+
+Output: Confidence Score + risk flag:Green: AI-match to approved clause, no issue.
+Yellow: Acceptable with review.
+Red: Non-standard, risky, or jurisdictional conflict.
+
+Next Stage: Passes flagged clauses to Clause Redliner.
+
+Step 4: Clause Redliner (AI Agent #4)Tools: Specialized clause-aware LLMs (broken down by clause type), Redline Engine with tracked changes output (Word-ready), Optional RegEx helpers for consistent insertions (like term templates).
+Process:Redlines only the flagged or changed portions of a clause in MS Word.
+Suggests alternative language based on:Company templates.
+Past accepted versions (within deal-type context).
+
+All judgment from Analyzer step.
+
+Output: Full redlined MS Doc stored in contract record under pass_no_1 (would it be easier to have attorneys manually upload the contract to a contract redlining tool and then it would split back the MS Word redlines for their attorney to edit if needed?).
+Next Stage: Passes redlined document to Auto-Sync + Record Tagging.
+
+Step 5: Auto-Sync + Record Tagging (AI Agent #5)Tools: Triggers.
+Process:If clause tagged as approved, synced to Clause Library.
+If clause updated, new version saved and linked to the contract ID.
+Deal record + Risk dashboard + Company360 all updated in real-time.
+
+Output: Updated CRM/CLM records and dashboards reflecting risk insights.
+
+Future AI Model Development (Phase 2)Objective: Develop custom AI models for each agent (Clause Extractor, Identifier, Analyzer, Redliner, Auto-Sync) to enhance accuracy and specificity.
+Approach: Leverage EDB Postgres AI and Ollama to train models on legal data (e.g., past contracts, playbooks) stored in PostgreSQL.
+Timeline: To be initiated after Phase 1 database completion, with iterative testing and integration into Phase 3 workflows.
+
+Integration with Consola360CRM/CLM: The workflow integrates with AccountsView.vue and DealsView.vue to track deals and contracts, updating the contracts table.
+Risk Analytics: RiskDashboardView.vue leverages Analyzer outputs to display real-time risk metrics (e.g., top properties with litigation, case type breakdowns).
+Dashboards: Visual insights empower executives and sales teams to predict risky deals, reducing legal department reliance.
+
 
 ## Frontend Overview
 
