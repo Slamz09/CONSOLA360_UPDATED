@@ -293,6 +293,120 @@ The frontend is built using **Vue.js** and is organized into modular views and r
 - **Performance**: Indexes on `property_id` and `entity_id` optimize queries for `RiskDashboardView.vue`.
 
 
+ ##Database front end integratration:
+
+### Immediate Next Steps
+1. **Verify PostgreSQL Installation**:
+   - Open a terminal or command prompt and run `psql -U postgres` to connect to the database. If prompted for a password, use the one you set during installation. If it connects, you’re good to go!
+   - If you get an error (e.g., "connection refused"), ensure the service is running (e.g., via Services on Windows) and check that port 5432 is free (use `netstat -aon | findstr :5432` on Windows).
+
+2. **Create Your Database**:
+   - In the `psql` prompt, create a database for your project:
+     ```
+     CREATE DATABASE consola360_db;
+     \c consola360_db
+     ```
+   - Use the `database/schema.sql` file you prepared to create tables (e.g., `accounts`, `contracts`):
+     ```
+     \i path/to/your-vue-app/database/schema.sql
+     ```
+
+3. **Install the Node.js Driver**:
+   - In your project directory, install the `pg` driver to connect your Node.js backend to PostgreSQL:
+     ```
+     npm install pg
+     ```
+   - Update `backend/server.js` with a connection pool:
+     ```javascript
+     const { Pool } = require('pg');
+     const pool = new Pool({
+       user: 'postgres',
+       host: 'localhost',
+       database: 'consola360_db',
+       password: 'your_password',
+       port: 5432,
+     });
+     module.exports = pool;
+     ```
+
+4. **Set Up the Backend API**:
+   - Ensure `backend/server.js` is configured to start a server and handle API requests. Add a basic route:
+     ```javascript
+     const express = require('express');
+     const pool = require('./pool');
+     const app = express();
+     app.use(express.json());
+
+     app.get('/accounts', async (req, res) => {
+       try {
+         const result = await pool.query('SELECT * FROM accounts');
+         res.json(result.rows);
+       } catch (err) {
+         res.status(500).send(err);
+       }
+     });
+
+     app.listen(3001, () => console.log('Server running on port 3001'));
+     ```
+   - Install Express if needed: `npm install express`.
+
+5. **Update the Frontend**:
+   - Modify `src/services/api.js` to call the backend API:
+     ```javascript
+     import axios from 'axios';
+
+     const API_BASE_URL = 'http://localhost:3001';
+
+     const apiService = {
+       getAccounts: () => axios.get(`${API_BASE_URL}/accounts`),
+     };
+
+     export default apiService;
+     ```
+   - Update `AccountsView.vue` to fetch data:
+     ```javascript
+     <script setup>
+     import { ref, onMounted } from 'vue';
+     import apiService from '@/services/api';
+
+     const accounts = ref([]);
+
+     onMounted(async () => {
+       const response = await apiService.getAccounts();
+       accounts.value = response.data;
+     });
+     </script>
+
+     <template>
+       <div>
+         <h1>Accounts</h1>
+         <ul>
+           <li v-for="account in accounts" :key="account.id">{{ account.company_name }}</li>
+         </ul>
+       </div>
+     </template>
+     ```
+
+6. **Test the Connection**:
+   - Start your Vite app: `npm run dev` (should load at `http://localhost:5173/`).
+   - Start the backend server: `node backend/server.js` in a separate terminal.
+   - Add some test data to `accounts` via `psql`:
+     ```
+     INSERT INTO accounts (company_name) VALUES ('Test Corp');
+     ```
+   - Refresh your app and check if "Test Corp" appears.
+
+### Preparing for Ollama
+- **Install pgAdmin 4**: Since it wasn’t in the installer, download it from https://www.pgadmin.org/download/ and install it to manage your database visually.
+- **Plan for Python Driver**: When setting up Ollama, install `psycopg2`:
+  ```
+  pip install psycopg2-binary
+  ```
+  This will allow Ollama to query your tables later.
+
+### Troubleshooting
+- If the app doesn’t load data, ensure the backend is running on port 3001 and there’s no port conflict with 5432.
+- Check the console for errors and let me know if you hit any snags!
 
 
 
