@@ -293,7 +293,7 @@ The frontend is built using **Vue.js** and is organized into modular views and r
 - **Performance**: Indexes on `property_id` and `entity_id` optimize queries for `RiskDashboardView.vue`.
 
 
- ##Database front end integratration:
+## Database front end integratration:
 
 ### Immediate Next Steps
 1. **Verify PostgreSQL Installation**:
