@@ -2,33 +2,31 @@
   <div class="risk-dashboard page-container">
     <!-- Header -->
     <div class="dashboard-header">
-      <h1 class="heading-primary">360° Risk Dashboard</h1>
+      <h1 class="heading-primary">Risk 360°</h1>
           </div>
 
     <!-- Risk Overview Cards -->
     <div class="risk-overview">
       <div class="risk-card overall-risk">
-        <h3 class="card-title">Overall Risk Score</h3>
-        <div class="risk-score-large">72</div>
-        <div class="risk-indicator high">High Risk</div>
+        <h3 class="card-title">Contracts Executed on Company Template</h3>
+       <div class="metric-value">88%</div>
+        <div class="metric-change positive">+9% improvement</div>
       </div>
 
       <div class="risk-card">
-        <h3 class="card-title">Active Cases</h3>
-        <div class="metric-value">64</div>
-        <div class="metric-change negative">+12 this month</div>
+        <h3 class="card-title">Active Lawsuits</h3>
+        <div class="metric-value">20</div>
+        <div class="metric-change positive">-5 this month</div>
       </div>
 
       <div class="risk-card">
-        <h3 class="card-title">Compliance Score</h3>
-        <div class="metric-value">85%</div>
-        <div class="metric-change positive">+3% improvement</div>
+        <h3 class="card-title">Pending Deals</h3>
+        <div class="metric-value">50</div>
       </div>
 
       <div class="risk-card">
-        <h3 class="card-title">Financial Exposure</h3>
-        <div class="metric-value">$3.2M</div>
-        <div class="metric-change">Potential liability</div>
+        <h3 class="card-title">Contracts in Legal Review</h3>
+        <div class="metric-value">200</div>
       </div>
     </div>
 
@@ -58,7 +56,6 @@
               </div>
             </div>
             <div class="risk-categories">
-              <span class="category-tag employment">Employment Law</span>
               <span class="category-tag environmental">Environmental</span>
               <span class="category-tag privacy">Privacy</span>
             </div>
@@ -116,45 +113,6 @@
           </div>
         </div>
       </section>
-
-      <!-- Active Litigation -->
-      <section class="dashboard-section active-litigation">
-        <h2 class="section-title">Active Federal & State Litigation</h2>
-        <div class="litigation-list">
-          <div class="litigation-item">
-            <div class="case-info">
-              <div class="case-header">
-                <span class="case-number">Case #2024-CV-1247</span>
-                <span class="status-badge active">Active</span>
-              </div>
-              <h4 class="case-title">Employment Class Action - California</h4>
-              <p class="case-description">Wage & hour dispute affecting 1,247 employees</p>
-              <div class="case-risk">
-                <span class="risk-label">High Risk</span>
-                <span class="exposure">Est. Exposure: $3.2M</span>
-                <span class="court">Court: USDC-CD</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="litigation-item">
-            <div class="case-info">
-              <div class="case-header">
-                <span class="case-number">Case #2024-C-0581</span>
-                <span class="status-badge pending">Pending</span>
-              </div>
-              <h4 class="case-title">Contract Dispute - Texas</h4>
-              <p class="case-description">Indemnity clause interpretation dispute</p>
-              <div class="case-risk">
-                <span class="risk-label medium">Medium Risk</span>
-                <span class="exposure">Est. Exposure: $750K</span>
-                <span class="court">Court: TX State</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- Regulatory Alerts -->
       <section class="dashboard-section regulatory-alerts">
         <h2 class="section-title">Regulatory Intelligence Alerts</h2>
@@ -193,7 +151,7 @@ import { ref, onMounted } from 'vue'
 
 // Mock data - replace with API calls
 const overallRisk = ref(72)
-const activeCases = ref(64)
+const activeCases = ref(20)
 const complianceScore = ref(85)
 const financialExposure = ref(3.2)
 
@@ -209,8 +167,10 @@ onMounted(() => {
 }
 
 .dashboard-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 3rem;
+  margin-top: 2rem;
+  font-size: 1px;
 }
 
 .heading-primary {
@@ -294,7 +254,7 @@ onMounted(() => {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .section-title {
@@ -502,7 +462,7 @@ onMounted(() => {
 
 .risk-label {
   color: var(--risk-high);
-  font-weight: 600;
+  font-weight: 550;
 }
 
 .risk-label.medium {
@@ -564,8 +524,9 @@ onMounted(() => {
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
   .risk-overview {
+    padding: 1rem;
     grid-template-columns: repeat(2, 1fr);
   }
   
@@ -574,7 +535,7 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .risk-overview {
     grid-template-columns: 1fr;
   }
