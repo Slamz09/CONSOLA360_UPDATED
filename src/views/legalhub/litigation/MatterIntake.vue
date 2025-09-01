@@ -3,8 +3,7 @@
     <!-- Header -->
     <div class="intake-header">
       <div class="header-content">
-        <h3 class="heading-tertiary">Matter Intake Dashboard</h3>
-        <p class="text-body">Streamlined legal matter intake with intelligent triage and risk assessment</p>
+        <h3 class="heading-tertiary">Matter Dashboard</h3>
       </div>
       <div class="header-actions">
         <button @click="showBulkTriage = true" class="btn btn-secondary btn-small">
@@ -23,181 +22,106 @@
       </div>
     </div>
 
-    <!-- Intake Statistics -->
+    <!-- Stats: Active Cases and New This Month -->
     <div class="intake-stats">
-      <div class="stat-card pending">
+      <div class="stat-card active">
         <div class="stat-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
-            <polyline points="12,6 12,12 16,14"/>
+            <path d="M8 12l2 2 4-4"/>
           </svg>
         </div>
         <div class="stat-content">
-          <div class="stat-number">{{ stats.pendingIntake }}</div>
-          <div class="stat-label">Pending Intake</div>
-          <div class="stat-detail">{{ stats.newToday }} received today</div>
+          <div class="stat-number">{{ activeCases }}</div>
+          <div class="stat-label">Active Cases</div>
+          <div class="stat-detail">Open statuses</div>
         </div>
       </div>
 
-      <div class="stat-card processing">
+      <div class="stat-card new-month">
         <div class="stat-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
           </svg>
         </div>
         <div class="stat-content">
-          <div class="stat-number">{{ stats.inTriage }}</div>
-          <div class="stat-label">In Triage</div>
-          <div class="stat-detail">Being evaluated</div>
-        </div>
-      </div>
-
-      <div class="stat-card completed">
-        <div class="stat-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20,6 9,17 4,12"/>
-          </svg>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.processedThisWeek }}</div>
-          <div class="stat-label">Processed This Week</div>
-          <div class="stat-detail">{{ stats.avgProcessingTime }}h avg time</div>
+          <div class="stat-number">{{ newThisMonth }}</div>
+          <div class="stat-label">New This Month</div>
+          <div class="stat-detail">{{ currentMonthName }}</div>
         </div>
       </div>
     </div>
 
-    <!-- Matter Intake Queue -->
-    <div class="intake-queue">
-      <div class="queue-header">
-        <h4 class="section-title">Matter Intake Queue</h4>
-        <div class="queue-filters">
-          <select v-model="priorityFilter" class="filter-select">
-            <option value="">All Priorities</option>
-            <option value="critical">Critical</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-          </select>
-          <select v-model="statusFilter" class="filter-select">
-            <option value="">All Statuses</option>
-            <option value="new">New</option>
-            <option value="in_review">In Review</option>
-            <option value="pending_assignment">Pending Assignment</option>
-            <option value="assigned">Assigned</option>
-          </select>
-          <select v-model="typeFilter" class="filter-select">
-            <option value="">All Types</option>
-            <option value="contract_dispute">Contract Dispute</option>
-            <option value="employment">Employment</option>
-            <option value="intellectual_property">IP</option>
-            <option value="regulatory">Regulatory</option>
-            <option value="litigation">Litigation</option>
-          </select>
-        </div>
+    <!-- Filters -->
+    <div class="queue-header">
+      <h4 class="section-title">Matter Intake Queue</h4>
+      <div class="queue-filters">
+        <select v-model="priorityFilter" class="filter-select">
+          <option value="">All Priorities</option>
+          <option value="critical">Critical</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <select v-model="statusFilter" class="filter-select">
+          <option value="">All Statuses</option>
+          <option value="new">New</option>
+          <option value="pending_assignment">Pending Assignment</option>
+          <option value="assigned">Assigned</option>
+          <option value="closed">Closed</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select v-model="typeFilter" class="filter-select">
+          <option value="">All Types</option>
+          <option value="contract_dispute">Contract Dispute</option>
+          <option value="employment">Employment</option>
+          <option value="intellectual_property">IP</option>
+          <option value="regulatory">Regulatory</option>
+          <option value="litigation">Litigation</option>
+        </select>
       </div>
+    </div>
 
-      <div class="matters-list">
-        <div v-for="matter in filteredMatters" :key="matter.id" class="matter-card">
-          <div class="matter-header">
-            <div class="matter-info">
-              <h5 class="matter-title">{{ matter.title }}</h5>
-              <p class="matter-description">{{ matter.description }}</p>
-              <div class="matter-meta">
-                <span class="matter-id">{{ matter.id }}</span>
-                <span class="submission-date">Submitted {{ formatRelativeTime(matter.submittedAt) }}</span>
-                <span class="submitter">by {{ matter.submittedBy }}</span>
-              </div>
-            </div>
-            <div class="matter-badges">
-              <span :class="['priority-badge', matter.priority]">{{ matter.priority }}</span>
-              <span :class="['status-badge', 'status-' + matter.status.replace(' ', '-').toLowerCase()]">
-                {{ matter.status }}
-              </span>
-            </div>
+    <!-- Table only (cards removed) -->
+    <div class="table-container">
+      <div class="table-scroll">
+        <div class="table-header">
+          <div class="cell cell-checkbox">
+            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll">
           </div>
+          <div class="cell">Case No</div>
+          <div class="cell">Case Type</div>
+          <div class="cell">Case Name</div>
+          <div class="cell">Plaintiff</div>
+          <div class="cell">Defendant</div>
+          <div class="cell">Court</div>
+        </div>
 
-          <div class="matter-details">
-            <div class="details-grid">
-              <div class="detail-item">
-                <span class="detail-label">Type:</span>
-                <span class="detail-value">{{ matter.type }}</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Department:</span>
-                <span class="detail-value">{{ matter.department }}</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Estimated Value:</span>
-                <span class="detail-value">${{ matter.estimatedValue.toLocaleString() }}</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Deadline:</span>
-                <span class="detail-value" :class="{ 'deadline-urgent': isDeadlineUrgent(matter.deadline) }">
-                  {{ formatDate(matter.deadline) }}
-                </span>
-              </div>
-            </div>
-
-            <div v-if="matter.aiAnalysis" class="ai-analysis">
-              <h6>AI Analysis</h6>
-              <div class="analysis-grid">
-                <div class="analysis-item">
-                  <span class="analysis-label">Risk Score:</span>
-                  <span :class="['risk-score', getRiskClass(matter.aiAnalysis.riskScore)]">
-                    {{ matter.aiAnalysis.riskScore }}/100
-                  </span>
-                </div>
-                <div class="analysis-item">
-                  <span class="analysis-label">Complexity:</span>
-                  <span class="complexity-level">{{ matter.aiAnalysis.complexity }}</span>
-                </div>
-                <div class="analysis-item">
-                  <span class="analysis-label">Similar Cases:</span>
-                  <span class="similar-cases">{{ matter.aiAnalysis.similarCases }} found</span>
-                </div>
-              </div>
-              <div class="ai-recommendations">
-                <p><strong>Recommendation:</strong> {{ matter.aiAnalysis.recommendation }}</p>
-                <div class="suggested-resources">
-                  <span class="resource-label">Suggested Attorney:</span>
-                  <span class="suggested-attorney">{{ matter.aiAnalysis.suggestedAttorney }}</span>
-                </div>
-              </div>
-            </div>
+        <div
+          v-for="matter in filteredMatters"
+          :key="'row-' + matter.id"
+          class="table-row"
+        >
+          <div class="cell cell-checkbox">
+            <input
+              type="checkbox"
+              :checked="isSelected(matter.id)"
+              @change="toggleRow(matter.id)"
+            >
           </div>
+          <div class="cell mono">{{ matter.id }}</div>
+          <div class="cell">{{ matter.caseType || matter.type }}</div>
+          <div class="cell strong">{{ matter.title }}</div>
+          <div class="cell">{{ matter.plaintiff || 'N/A' }}</div>
+          <div class="cell">{{ matter.defendant || matter.opposingParty || 'N/A' }}</div>
+          <div class="cell">{{ matter.court || 'N/A' }}</div>
+        </div>
 
-          <div class="matter-actions">
-            <button @click="assignMatter(matter)" class="action-btn assign">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
-              Assign
-            </button>
-            <button @click="reviewMatter(matter.id)" class="action-btn review">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-              Review
-            </button>
-            <button @click="createCase(matter)" class="action-btn create">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14m-7-7h14"/>
-              </svg>
-              Create Case
-            </button>
-            <div class="action-dropdown">
-              <button class="action-btn more">⋮</button>
-              <div class="dropdown-menu">
-                <button @click="escalateMatter(matter)">Escalate</button>
-                <button @click="requestMoreInfo(matter)">Request Info</button>
-                <button @click="closeMatter(matter)">Close/Reject</button>
-              </div>
-            </div>
-          </div>
+        <div v-if="filteredMatters.length === 0" class="table-empty">
+          No matters match your filters.
         </div>
       </div>
     </div>
@@ -240,18 +164,6 @@
                       <option value="critical">Critical</option>
                     </select>
                   </div>
-                  <div class="form-group">
-                    <label class="form-label">Department</label>
-                    <select v-model="newMatter.department" class="form-select">
-                      <option value="">Select Department</option>
-                      <option value="sales">Sales</option>
-                      <option value="hr">Human Resources</option>
-                      <option value="finance">Finance</option>
-                      <option value="operations">Operations</option>
-                      <option value="technology">Technology</option>
-                      <option value="marketing">Marketing</option>
-                    </select>
-                  </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Description *</label>
@@ -263,14 +175,6 @@
               <div class="form-section">
                 <h4>Additional Details</h4>
                 <div class="form-grid">
-                  <div class="form-group">
-                    <label class="form-label">Estimated Value</label>
-                    <input v-model.number="newMatter.estimatedValue" type="number" class="form-input" placeholder="0">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Deadline</label>
-                    <input v-model="newMatter.deadline" type="date" class="form-input">
-                  </div>
                   <div class="form-group">
                     <label class="form-label">Opposing Party</label>
                     <input v-model="newMatter.opposingParty" type="text" class="form-input">
@@ -354,9 +258,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 
-// State
+/* State */
 const showNewMatterModal = ref(false)
 const showBulkTriage = ref(false)
 const priorityFilter = ref('')
@@ -365,276 +269,165 @@ const typeFilter = ref('')
 const fileInput = ref()
 const uploadedFiles = ref([])
 
-// Mock data
-const stats = ref({
-  urgentMatters: 5,
-  pendingIntake: 23,
-  newToday: 7,
-  inTriage: 12,
-  processedThisWeek: 34,
-  avgProcessingTime: 18
-})
+/* Selection for table */
+const selectAll = ref(false)
+const selectedRows = ref([])
 
-const triageRecommendations = ref([
-  {
-    id: 1,
-    matterId: 'MTR-2024-001',
-    matterTitle: 'Employee Discrimination Complaint',
-    priority: 'critical',
-    confidence: 92,
-    summary: 'High-risk employment matter requiring immediate legal attention',
-    suggestedAction: 'Assign to Employment Law specialist immediately',
-    estimatedValue: 250000,
-    riskLevel: 'high'
-  },
-  {
-    id: 2,
-    matterId: 'MTR-2024-002',
-    matterTitle: 'Vendor Contract Dispute',
-    priority: 'medium',
-    confidence: 78,
-    summary: 'Standard contract dispute over payment terms',
-    suggestedAction: 'Route to Commercial Litigation team',
-    estimatedValue: 45000,
-    riskLevel: 'medium'
-  }
-])
-
+/* Matters data (cards removed, fields you asked to delete removed) */
 const matters = ref([
   {
     id: 'MTR-2024-001',
     title: 'Employee Discrimination Complaint',
     description: 'Former employee filed discrimination complaint with EEOC citing workplace harassment and wrongful termination',
     type: 'Employment',
-    department: 'Human Resources',
+    caseType: 'Employment',
     priority: 'critical',
     status: 'New',
-    estimatedValue: 250000,
-    deadline: new Date('2024-12-15'),
-    submittedAt: new Date('2024-12-01T09:30:00'),
-    submittedBy: 'Sarah Johnson (HR)',
-    aiAnalysis: {
-      riskScore: 85,
-      complexity: 'High',
-      similarCases: 12,
-      recommendation: 'Immediate assignment to employment specialist. High risk of escalation.',
-      suggestedAttorney: 'Michael Chen (Employment Law)'
-    }
+    createdAt: new Date('2024-12-01T09:30:00'),
+    plaintiff: 'Former Employee',
+    defendant: 'Acme Corp',
+    court: 'EEOC'
   },
   {
     id: 'MTR-2024-002',
     title: 'Vendor Contract Breach',
     description: 'Major vendor failed to deliver services per SLA, seeking damages and contract termination',
     type: 'Contract Dispute',
-    department: 'Procurement',
+    caseType: 'Contract',
     priority: 'high',
-    status: 'In Review',
-    estimatedValue: 75000,
-    deadline: new Date('2024-12-20'),
-    submittedAt: new Date('2024-11-28T14:15:00'),
-    submittedBy: 'David Kim (Procurement)',
-    aiAnalysis: {
-      riskScore: 45,
-      complexity: 'Medium',
-      similarCases: 8,
-      recommendation: 'Standard commercial dispute. Can be handled by general counsel.',
-      suggestedAttorney: 'Emily Rodriguez (Commercial)'
-    }
+    status: 'New',
+    createdAt: new Date('2024-11-28T14:15:00'),
+    plaintiff: 'Acme Corp',
+    defendant: 'VendorCo LLC',
+    court: 'N/A'
   },
   {
     id: 'MTR-2024-003',
     title: 'IP Infringement Claim',
     description: 'Competitor alleging patent infringement on our new product line',
     type: 'Intellectual Property',
-    department: 'Technology',
+    caseType: 'IP Litigation',
     priority: 'high',
     status: 'Pending Assignment',
-    estimatedValue: 500000,
-    deadline: new Date('2024-12-10'),
-    submittedAt: new Date('2024-11-30T11:45:00'),
-    submittedBy: 'Lisa Park (CTO)',
-    aiAnalysis: {
-      riskScore: 72,
-      complexity: 'High',
-      similarCases: 3,
-      recommendation: 'Requires IP specialist. Consider external counsel for patent expertise.',
-      suggestedAttorney: 'Robert Kim (IP Law)'
-    }
+    createdAt: new Date('2024-11-30T11:45:00'),
+    plaintiff: 'Competitor Inc.',
+    defendant: 'Acme Corp',
+    court: 'US District Court'
   }
 ])
 
+/* New matter model (trimmed) */
 const newMatter = ref({
   title: '',
   type: '',
   priority: 'medium',
-  department: '',
   description: '',
-  estimatedValue: null,
-  deadline: '',
   opposingParty: '',
   jurisdiction: ''
 })
 
-// Computed
+/* Filtering */
 const filteredMatters = computed(() => {
   let filtered = matters.value
-
   if (priorityFilter.value) {
-    filtered = filtered.filter(m => m.priority === priorityFilter.value)
+    filtered = filtered.filter(m => (m.priority || '').toLowerCase() === priorityFilter.value)
   }
   if (statusFilter.value) {
-    filtered = filtered.filter(m => m.status.toLowerCase().replace(' ', '_') === statusFilter.value)
+    filtered = filtered.filter(m => (m.status || '').toLowerCase().replace(' ', '_') === statusFilter.value)
   }
   if (typeFilter.value) {
-    filtered = filtered.filter(m => m.type.toLowerCase().replace(' ', '_') === typeFilter.value)
+    filtered = filtered.filter(m => (m.type || '').toLowerCase().replace(' ', '_') === typeFilter.value)
   }
-
   return filtered
 })
 
-// Methods
-function formatRelativeTime(date) {
-  const now = new Date()
-  const diffMs = now - date
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-  
-  if (diffHours < 1) return 'Just now'
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays === 1) return 'Yesterday'
-  return `${diffDays} days ago`
-}
+/* Stats */
+const now = new Date()
+const thisYear = now.getFullYear()
+const thisMonth = now.getMonth()
 
-function formatDate(date) {
-  if (!date) return 'No deadline'
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  }).format(date)
-}
+const activeCases = computed(() => {
+  return matters.value.filter(m => {
+    const s = (m.status || '').toLowerCase()
+    return s !== 'closed' && s !== 'rejected'
+  }).length
+})
 
-function isDeadlineUrgent(deadline) {
-  if (!deadline) return false
-  const now = new Date()
-  const diffDays = Math.floor((deadline - now) / (1000 * 60 * 60 * 24))
-  return diffDays <= 7
-}
+const newThisMonth = computed(() =>
+  matters.value.filter(m => {
+    const d = m.createdAt instanceof Date ? m.createdAt : new Date(m.createdAt)
+    return d.getFullYear() === thisYear && d.getMonth() === thisMonth
+  }).length
+)
+const currentMonthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(now)
 
-function getRiskClass(score) {
-  if (score >= 70) return 'high'
-  if (score >= 40) return 'medium'
-  return 'low'
-}
-
-function acceptRecommendation(recommendation) {
-  console.log('Accepting recommendation:', recommendation.matterTitle)
-  // Remove from recommendations
-  const index = triageRecommendations.value.findIndex(r => r.id === recommendation.id)
-  if (index > -1) {
-    triageRecommendations.value.splice(index, 1)
+/* Table selection */
+function toggleSelectAll() {
+  if (selectAll.value) {
+    selectedRows.value = filteredMatters.value.map(m => m.id)
+  } else {
+    selectedRows.value = []
   }
 }
-
-function dismissRecommendation(recommendation) {
-  const index = triageRecommendations.value.findIndex(r => r.id === recommendation.id)
-  if (index > -1) {
-    triageRecommendations.value.splice(index, 1)
+function toggleRow(id) {
+  if (selectedRows.value.includes(id)) {
+    selectedRows.value = selectedRows.value.filter(x => x !== id)
+  } else {
+    selectedRows.value.push(id)
   }
+  selectAll.value =
+    filteredMatters.value.length > 0 &&
+    selectedRows.value.length === filteredMatters.value.length
+}
+function isSelected(id) {
+  return selectedRows.value.includes(id)
 }
 
-function reviewMatter(matterId) {
-  console.log('Reviewing matter:', matterId)
-}
-
-function assignMatter(matter) {
-  console.log('Assigning matter:', matter.title)
-}
-
-function createCase(matter) {
-  console.log('Creating case from matter:', matter.title)
-}
-
-function escalateMatter(matter) {
-  console.log('Escalating matter:', matter.title)
-}
-
-function requestMoreInfo(matter) {
-  console.log('Requesting more info for:', matter.title)
-}
-
-function closeMatter(matter) {
-  console.log('Closing matter:', matter.title)
-}
-
-function triggerFileUpload() {
-  fileInput.value?.click()
-}
-
+/* File upload */
+function triggerFileUpload() { fileInput.value?.click() }
 function handleFileUpload(event) {
   const files = Array.from(event.target.files)
   uploadedFiles.value.push(...files)
 }
-
 function removeFile(file) {
-  const index = uploadedFiles.value.indexOf(file)
-  if (index > -1) {
-    uploadedFiles.value.splice(index, 1)
-  }
+  const i = uploadedFiles.value.indexOf(file)
+  if (i > -1) uploadedFiles.value.splice(i, 1)
 }
 
+/* Actions */
+function reviewMatter(matterId) { console.log('Reviewing matter:', matterId) }
+function assignMatter(matter) { console.log('Assigning matter:', matter.title) }
+function createCase(matter) { console.log('Creating case from matter:', matter.title) }
+function escalateMatter(matter) { console.log('Escalating matter:', matter.title) }
+function requestMoreInfo(matter) { console.log('Requesting more info for:', matter.title) }
+function closeMatter(matter) { console.log('Closing matter:', matter.title) }
+
+/* Submit new matter */
 function submitMatter() {
   const matter = {
     id: `MTR-2024-${String(matters.value.length + 1).padStart(3, '0')}`,
     ...newMatter.value,
+    caseType: newMatter.value.type || '',
     status: 'New',
-    submittedAt: new Date(),
-    submittedBy: 'Current User',
-    aiAnalysis: null // Will be generated by AI
+    createdAt: new Date(),
+    plaintiff: '',
+    defendant: newMatter.value.opposingParty || '',
+    court: ''
   }
-  
   matters.value.push(matter)
   showNewMatterModal.value = false
-  
-  // Reset form
-  newMatter.value = {
-    title: '',
-    type: '',
-    priority: 'medium',
-    department: '',
-    description: '',
-    estimatedValue: null,
-    deadline: '',
-    opposingParty: '',
-    jurisdiction: ''
-  }
+  newMatter.value = { title: '', type: '', priority: 'medium', description: '', opposingParty: '', jurisdiction: '' }
   uploadedFiles.value = []
 }
 
-function bulkAssignByType() {
-  console.log('Bulk assigning by type...')
-  showBulkTriage.value = false
-}
-
-function bulkPrioritizeByDeadline() {
-  console.log('Bulk prioritizing by deadline...')
-  showBulkTriage.value = false
-}
-
-function bulkCategorizeByAI() {
-  console.log('Bulk categorizing by AI...')
-  showBulkTriage.value = false
-}
-
-onMounted(() => {
-  // Load matters data
-})
+/* Bulk triage */
+function bulkAssignByType() { console.log('Bulk assigning by type...'); showBulkTriage.value = false }
+function bulkPrioritizeByDeadline() { console.log('Bulk prioritizing by deadline...'); showBulkTriage.value = false }
+function bulkCategorizeByAI() { console.log('Bulk categorizing by AI...'); showBulkTriage.value = false }
 </script>
 
 <style scoped>
-.matter-intake {
-  /* Inherits styles from parent */
-}
+.matter-intake {}
 
 .intake-header {
   display: flex;
@@ -643,246 +436,43 @@ onMounted(() => {
   margin-bottom: 2rem;
   gap: 2rem;
 }
+.header-actions { display: flex; gap: 1rem; }
 
-.header-content h3 {
-  margin-bottom: 0.5rem;
-}
-
-.header-actions {
-  display: flex;
-  gap: 1rem;
-}
-
+/* Stats */
 .intake-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
-
 .stat-card {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.5rem;
+  padding: 1.25rem 1.5rem;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   border-left: 4px solid;
 }
-
-.stat-card.urgent {
-  border-left-color: var(--risk-high);
-}
-
-.stat-card.pending {
-  border-left-color: var(--risk-medium);
-}
-
-.stat-card.processing {
-  border-left-color: var(--secondary-accent);
-}
-
-.stat-card.completed {
-  border-left-color: var(--health-excellent);
-}
-
+.stat-card.active { border-left-color: var(--secondary-accent); }
+.stat-card.new-month { border-left-color: var(--primary-accent); }
 .stat-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.1);
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
 }
+.stat-number { font-size: 1.6rem; font-weight: 700; color: var(--text-primary); }
+.stat-label { color: var(--text-primary); font-weight: 600; }
+.stat-detail { color: var(--text-secondary); font-size: 0.8rem; }
 
-.stat-number {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.25rem;
-}
-
-.stat-label {
-  color: var(--text-primary);
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-}
-
-.stat-detail {
-  color: var(--text-secondary);
-  font-size: 0.75rem;
-}
-
-.ai-triage-section {
-  margin-bottom: 3rem;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 1.5rem;
-}
-
-.triage-recommendations {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.recommendation-card {
-  background: rgba(124, 58, 237, 0.05);
-  border: 1px solid rgba(124, 58, 237, 0.2);
-  border-radius: 12px;
-  padding: 1.5rem;
-}
-
-.recommendation-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.recommendation-priority {
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.recommendation-priority.critical {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-}
-
-.recommendation-priority.high {
-  background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
-}
-
-.recommendation-priority.medium {
-  background: rgba(124, 58, 237, 0.1);
-  color: var(--secondary-accent);
-}
-
-.recommendation-confidence {
-  color: var(--secondary-accent);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.recommendation-content h5 {
-  color: var(--text-primary);
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.recommendation-summary {
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-  line-height: 1.5;
-}
-
-.recommendation-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.875rem;
-}
-
-.detail-item .label {
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.detail-item .value {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.risk-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-}
-
-.risk-badge.low {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-}
-
-.risk-badge.medium {
-  background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
-}
-
-.risk-badge.high {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-}
-
-.recommendation-actions {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.recommendation-btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.recommendation-btn.accept {
-  background: var(--health-excellent);
-  color: white;
-}
-
-.recommendation-btn.review {
-  background: var(--primary-accent);
-  color: white;
-}
-
-.recommendation-btn.dismiss {
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-}
-
-.intake-queue {
-  margin-bottom: 3rem;
-}
-
+/* Filters */
 .queue-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1rem;
 }
-
-.queue-filters {
-  display: flex;
-  gap: 1rem;
-}
-
+.section-title { color: var(--text-primary); font-weight: 700; }
+.queue-filters { display: flex; gap: 1rem; }
 .filter-select {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
@@ -892,567 +482,104 @@ onMounted(() => {
   font-size: 0.875rem;
 }
 
-.matters-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.matter-card {
-  background: rgba(255, 255, 255, 0.02);
+/* Table */
+.table-container {
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-}
-
-.matter-card:hover {
-  border-color: var(--primary-accent);
-  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.1);
-}
-
-.matter-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1rem;
-}
-
-.matter-title {
-  color: var(--text-primary);
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-}
-
-.matter-description {
-  color: var(--text-secondary);
-  line-height: 1.5;
-  margin-bottom: 0.75rem;
-}
-
-.matter-meta {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-}
-
-.matter-id {
-  color: var(--secondary-accent);
-  font-family: 'Space Grotesk', monospace;
-  font-weight: 500;
-}
-
-.matter-badges {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: flex-end;
-}
-
-.priority-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.priority-badge.critical {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-}
-
-.priority-badge.high {
-  background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
-}
-
-.priority-badge.medium {
-  background: rgba(124, 58, 237, 0.1);
-  color: var(--secondary-accent);
-}
-
-.priority-badge.low {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-}
-
-.status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.status-new {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
-}
-
-.status-in-review {
-  background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
-}
-
-.status-pending-assignment {
-  background: rgba(124, 58, 237, 0.1);
-  color: var(--secondary-accent);
-}
-
-.status-assigned {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-}
-
-.matter-details {
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  overflow: hidden;
 }
-
-.details-grid {
+.table-scroll { overflow-x: auto; }
+.table-header,
+.table-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.detail-label {
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.detail-value {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.detail-value.deadline-urgent {
-  color: var(--risk-high);
-}
-
-.ai-analysis {
-  border-top: 1px solid var(--border-color);
-  padding-top: 1rem;
-}
-
-.ai-analysis h6 {
-  color: var(--text-primary);
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  font-size: 0.875rem;
-}
-
-.analysis-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.analysis-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-}
-
-.analysis-label {
-  color: var(--text-secondary);
-}
-
-.risk-score.high {
-  color: var(--risk-high);
-  font-weight: 600;
-}
-
-.risk-score.medium {
-  color: var(--risk-medium);
-  font-weight: 600;
-}
-
-.risk-score.low {
-  color: var(--health-excellent);
-  font-weight: 600;
-}
-
-.complexity-level,
-.similar-cases {
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.ai-recommendations {
-  font-size: 0.875rem;
-}
-
-.ai-recommendations p {
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
-  line-height: 1.5;
-}
-
-.suggested-resources {
-  display: flex;
-  gap: 1rem;
-}
-
-.resource-label {
-  color: var(--text-secondary);
-}
-
-.suggested-attorney {
-  color: var(--secondary-accent);
-  font-weight: 500;
-}
-
-.matter-actions {
-  display: flex;
-  gap: 0.75rem;
+  grid-template-columns:
+    48px    /* checkbox */
+    140px   /* Case No */
+    160px   /* Case Type */
+    260px   /* Case Name */
+    200px   /* Plaintiff */
+    200px   /* Defendant */
+    180px;  /* Court */
   align-items: center;
+  min-width: 1188px;
 }
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
+.table-header {
+  position: sticky; top: 0;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1; font-weight: 700; color: var(--text-primary);
 }
+.table-row { border-top: 1px solid var(--border-color); }
+.cell { padding: 0.7rem 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
+.cell.strong { font-weight: 700; }
+.cell.mono { font-family: 'Space Grotesk', monospace; }
+.cell-checkbox { display: flex; align-items: center; justify-content: center; }
+.table-empty { padding: 1rem; color: var(--text-secondary); }
 
-.action-btn.assign {
-  background: var(--secondary-accent);
-  color: white;
-}
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.45rem 0.8rem; cursor: pointer; }
+.btn-primary { background: var(--primary-accent); color: #fff; border-color: var(--primary-accent); }
+.btn-secondary { background: var(--bg-primary); color: var(--text-primary); }
 
-.action-btn.review {
-  background: var(--primary-accent);
-  color: white;
-}
-
-.action-btn.create {
-  background: var(--health-excellent);
-  color: white;
-}
-
-.action-btn.more {
-  background: transparent;
-  color: var(--text-secondary);
-  padding: 0.5rem;
-}
-
-.action-dropdown {
-  position: relative;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  display: none;
-  z-index: 10;
-  min-width: 150px;
-}
-
-.action-dropdown:hover .dropdown-menu {
-  display: block;
-}
-
-.dropdown-menu button {
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  text-align: left;
-  cursor: pointer;
-  font-size: 0.875rem;
-}
-
-.dropdown-menu button:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* Modal Styles */
+/* Modal */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 2rem;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+  display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 2rem;
 }
-
 .modal-content {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  max-width: 600px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-width: 900px; width: 100%;
+  max-height: 90vh; overflow-y: auto;
 }
-
-.modal-content.large {
-  max-width: 900px;
-}
-
+.modal-content.large { max-width: 900px; }
 .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2rem;
-  border-bottom: 1px solid var(--border-color);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-color);
 }
+.modal-body { padding: 2rem; }
+.close-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
 
-.modal-header h3 {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem;
-}
-
-.modal-body {
-  padding: 2rem;
-}
-
-.matter-form {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.form-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
+.matter-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.form-sections { display: flex; flex-direction: column; gap: 1.25rem; }
 .form-section {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255,255,255,0.02);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border-radius: 12px; padding: 1.25rem;
 }
-
-.form-section h4 {
-  color: var(--text-primary);
-  font-weight: 600;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border-color);
+.form-section h4 { color: var(--text-primary); font-weight: 700; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 0.7rem 0.9rem; background: var(--bg-primary); border: 1px solid var(--border-color);
+  border-radius: 8px; color: var(--text-primary);
 }
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-}
-
-.form-textarea {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-primary);
-  font-family: inherit;
-  resize: vertical;
-}
-
-.file-upload-area {
-  margin-top: 1rem;
-}
-
+.file-upload-area { margin-top: 0.5rem; }
 .upload-zone {
-  border: 2px dashed var(--border-color);
-  border-radius: 12px;
-  padding: 3rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 1rem;
+  border: 2px dashed var(--border-color); border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; margin-bottom: 0.8rem;
 }
-
-.upload-zone:hover {
-  border-color: var(--primary-accent);
-  background: rgba(124, 58, 237, 0.05);
-}
-
-.upload-icon {
-  color: var(--secondary-accent);
-  margin-bottom: 1rem;
-}
-
-.upload-zone h4 {
-  color: var(--text-primary);
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.upload-zone p {
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
-}
-
-.file-types {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-}
-
-.uploaded-files {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
+.upload-zone:hover { border-color: var(--primary-accent); background: rgba(124, 58, 237, 0.05); }
+.upload-icon { color: var(--secondary-accent); margin-bottom: 0.5rem; }
+.file-types { font-size: 0.8rem; color: var(--text-secondary); }
+.uploaded-files { display: flex; flex-direction: column; gap: 0.4rem; }
 .uploaded-file {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.5rem 0.8rem; background: rgba(255,255,255,0.05); border-radius: 6px;
 }
+.remove-file { background: none; border: none; color: var(--risk-high); cursor: pointer; padding: 0.25rem; }
+.form-actions { display: flex; justify-content: flex-end; gap: 1rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); }
 
-.file-name {
-  color: var(--text-primary);
-  font-size: 0.875rem;
-}
-
-.remove-file {
-  background: none;
-  border: none;
-  color: var(--risk-high);
-  cursor: pointer;
-  padding: 0.25rem;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border-color);
-}
-
-.bulk-triage-options {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
+/* Bulk triage */
+.bulk-triage-options { display: flex; flex-direction: column; gap: 0.8rem; }
 .triage-option {
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  padding: 1.25rem; background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer;
 }
-
-.triage-option:hover {
-  border-color: var(--primary-accent);
-  background: rgba(124, 58, 237, 0.05);
-}
-
-.triage-option h4 {
-  color: var(--text-primary);
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.triage-option p {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
+.triage-option:hover { border-color: var(--primary-accent); background: rgba(124,58,237,0.05); }
 
 @media (max-width: 768px) {
-  .intake-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .header-actions {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .intake-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .recommendation-header {
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-start;
-  }
-
-  .recommendation-details {
-    grid-template-columns: 1fr;
-  }
-
-  .queue-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
-
-  .queue-filters {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .matter-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .matter-badges {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .details-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .analysis-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .matter-actions {
-    flex-wrap: wrap;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+  .intake-header { flex-direction: column; gap: 1rem; }
+  .queue-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
 }
 </style>
