@@ -1,39 +1,41 @@
-// src/router/index.ts
+// src/router/index.ts - Performance Optimized
 import { createRouter, createWebHistory } from 'vue-router'
 
-// Main module views
+// Eagerly load critical/frequently accessed views
 import RiskDashboardView from '@/views/RiskDashboardView.vue'
-import AccountsView from '@/views/AccountsView.vue'
 import Deal360View from '@/views/Deal360View.vue'
 import LegalHubView from '@/views/LegalHubView.vue'
-import SupportDashboard from '@/views/SupportDashboard.vue'
 
-// Deal 360 subviews
-const LeadsView = () => import('@/views/deal360/LeadsView.vue')
-const DealsView = () => import('@/views/deal360/DealsView.vue')
-const Deal360ContractsView = () => import('@/views/deal360/Deal360ContractsView.vue')
+// Lazy load less critical views
+const AccountsView = () => import('@/views/AccountsView.vue')
+const SupportDashboard = () => import('@/views/SupportDashboard.vue')
 
-// Legal Hub subviews
-const ContractsManagement = () => import('@/views/legalhub/ContractsManagement.vue')
-const LitigationCompliance = () => import('@/views/legalhub/LitigationCompliance.vue')
-const LegalIntelligence = () => import('@/views/legalhub/LegalIntelligence.vue')
+// Preload important Deal360 components
+const LeadsView = () => import(/* webpackChunkName: "deal360" */ '@/views/deal360/LeadsView.vue')
+const DealsView = () => import(/* webpackChunkName: "deal360" */ '@/views/deal360/DealsView.vue')
+const ContractsView = () => import(/* webpackChunkName: "deal360" */ '@/views/deal360/ContractsView.vue')
 
-// Legal Hub - Contracts Management subviews
-const AllContracts = () => import('@/views/legalhub/contracts/AllContracts.vue')
-const AssignedContracts = () => import('@/views/legalhub/contracts/AssignedContracts.vue')
-const ContractGenerator = () => import('@/views/legalhub/contracts/ContractGenerator.vue')
-const ClauseRepository = () => import('@/views/legalhub/contracts/ClauseRepository.vue')
+// Group Legal Hub components for better caching
+const ContractsManagement = () => import(/* webpackChunkName: "legal-hub" */ '@/views/legalhub/ContractsManagement.vue')
+const LitigationCompliance = () => import(/* webpackChunkName: "legal-hub" */ '@/views/legalhub/LitigationCompliance.vue')
+const LegalIntelligence = () => import(/* webpackChunkName: "legal-hub" */ '@/views/legalhub/LegalIntelligence.vue')
 
-// Legal Hub - Litigation & Compliance subviews
-const MatterIntake = () => import('@/views/legalhub/litigation/MatterIntake.vue')
-const ActiveCases = () => import('@/views/legalhub/litigation/ActiveCases.vue')
-const AssignedCases = () => import('@/views/legalhub/litigation/AssignedCases.vue')
-const LegalTimeline = () => import('@/views/legalhub/litigation/LegalTimeline.vue')
-const DisputeAnalytics = () => import('@/views/legalhub/litigation/DisputeAnalytics.vue')
+// Group contract management components
+const AllContracts = () => import(/* webpackChunkName: "contracts" */ '@/views/legalhub/contracts/AllContracts.vue')
+const AssignedContracts = () => import(/* webpackChunkName: "contracts" */ '@/views/legalhub/contracts/AssignedContracts.vue')
+const ContractGenerator = () => import(/* webpackChunkName: "contracts" */ '@/views/legalhub/contracts/ContractGenerator.vue')
+const ClauseRepository = () => import(/* webpackChunkName: "contracts" */ '@/views/legalhub/contracts/ClauseRepository.vue')
 
-// Legal Hub - Legal Intelligence subviews
-const RegulatoryFeed = () => import('@/views/legalhub/intelligence/RegulatoryFeed.vue')
-const PlaybooksTraining = () => import('@/views/legalhub/intelligence/PlaybooksTraining.vue')
+// Group litigation components
+const MatterIntake = () => import(/* webpackChunkName: "litigation" */ '@/views/legalhub/litigation/MatterIntake.vue')
+const ActiveCases = () => import(/* webpackChunkName: "litigation" */ '@/views/legalhub/litigation/ActiveCases.vue')
+const AssignedCases = () => import(/* webpackChunkName: "litigation" */ '@/views/legalhub/litigation/AssignedCases.vue')
+const LegalTimeline = () => import(/* webpackChunkName: "litigation" */ '@/views/legalhub/litigation/LegalTimeline.vue')
+const DisputeAnalytics = () => import(/* webpackChunkName: "litigation" */ '@/views/legalhub/litigation/DisputeAnalytics.vue')
+
+// Group intelligence components
+const RegulatoryFeed = () => import(/* webpackChunkName: "intelligence" */ '@/views/legalhub/intelligence/RegulatoryFeed.vue')
+const PlaybooksTraining = () => import(/* webpackChunkName: "intelligence" */ '@/views/legalhub/intelligence/PlaybooksTraining.vue')
 
 const routes = [
   {
@@ -42,7 +44,8 @@ const routes = [
     component: RiskDashboardView,
     meta: {
       title: 'Risk 360 Dashboard',
-      description: 'Real-time corporate risk intelligence and heat maps'
+      description: 'Real-time corporate risk intelligence and heat maps',
+      preload: true // Mark for preloading
     }
   },
   {
@@ -51,7 +54,8 @@ const routes = [
     component: Deal360View,
     meta: {
       title: 'Deal 360',
-      description: 'Deal-to-Contract unified workflow management'
+      description: 'Deal-to-Contract unified workflow management',
+      preload: true
     },
     children: [
       {
@@ -79,7 +83,7 @@ const routes = [
       {
         path: 'contracts',
         name: 'Deal360Contracts',
-        component: Deal360ContractsView,
+        component: ContractsView,
         meta: {
           title: 'Deal Contracts',
           description: 'Contract generation and lifecycle'
@@ -93,7 +97,8 @@ const routes = [
     component: LegalHubView,
     meta: {
       title: 'Legal Hub',
-      description: 'Comprehensive legal operations management'
+      description: 'Comprehensive legal operations management',
+      preload: true
     },
     children: [
       {
@@ -104,6 +109,10 @@ const routes = [
         path: 'contracts',
         name: 'ContractsManagement',
         component: ContractsManagement,
+        meta: {
+          title: 'Contracts Management',
+          description: 'Contract lifecycle management'
+        },
         children: [
           {
             path: '',
@@ -112,22 +121,38 @@ const routes = [
           {
             path: 'all',
             name: 'AllContracts',
-            component: AllContracts
+            component: AllContracts,
+            meta: {
+              title: 'All Contracts',
+              description: 'View all contracts'
+            }
           },
           {
             path: 'assigned',
             name: 'AssignedContracts',
-            component: AssignedContracts
+            component: AssignedContracts,
+            meta: {
+              title: 'Assigned Contracts',
+              description: 'Contracts assigned to you'
+            }
           },
           {
             path: 'generator',
             name: 'ContractGenerator',
-            component: ContractGenerator
+            component: ContractGenerator,
+            meta: {
+              title: 'Contract Generator',
+              description: 'Generate new contracts'
+            }
           },
           {
             path: 'repository',
             name: 'ClauseRepository',
-            component: ClauseRepository
+            component: ClauseRepository,
+            meta: {
+              title: 'Clause Repository',
+              description: 'Manage contract clauses'
+            }
           }
         ]
       },
@@ -135,6 +160,10 @@ const routes = [
         path: 'litigation',
         name: 'LitigationCompliance',
         component: LitigationCompliance,
+        meta: {
+          title: 'Litigation & Compliance',
+          description: 'Legal case and compliance management'
+        },
         children: [
           {
             path: '',
@@ -143,27 +172,47 @@ const routes = [
           {
             path: 'intake',
             name: 'MatterIntake',
-            component: MatterIntake
+            component: MatterIntake,
+            meta: {
+              title: 'Matter Intake',
+              description: 'New matter intake'
+            }
           },
           {
             path: 'active',
             name: 'ActiveCases',
-            component: ActiveCases
+            component: ActiveCases,
+            meta: {
+              title: 'Active Cases',
+              description: 'Active legal cases'
+            }
           },
           {
             path: 'assigned',
             name: 'AssignedCases',
-            component: AssignedCases
+            component: AssignedCases,
+            meta: {
+              title: 'Assigned Cases',
+              description: 'Cases assigned to you'
+            }
           },
           {
             path: 'timeline',
             name: 'LegalTimeline',
-            component: LegalTimeline
+            component: LegalTimeline,
+            meta: {
+              title: 'Legal Timeline',
+              description: 'Case timeline and milestones'
+            }
           },
           {
             path: 'analytics',
             name: 'DisputeAnalytics',
-            component: DisputeAnalytics
+            component: DisputeAnalytics,
+            meta: {
+              title: 'Dispute Analytics',
+              description: 'Legal analytics and insights'
+            }
           }
         ]
       },
@@ -171,6 +220,10 @@ const routes = [
         path: 'intelligence',
         name: 'LegalIntelligence',
         component: LegalIntelligence,
+        meta: {
+          title: 'Legal Intelligence',
+          description: 'Legal research and intelligence'
+        },
         children: [
           {
             path: '',
@@ -179,12 +232,20 @@ const routes = [
           {
             path: 'regulatory',
             name: 'RegulatoryFeed',
-            component: RegulatoryFeed
+            component: RegulatoryFeed,
+            meta: {
+              title: 'Regulatory Feed',
+              description: 'Regulatory updates and news'
+            }
           },
           {
             path: 'playbooks',
             name: 'PlaybooksTraining',
-            component: PlaybooksTraining
+            component: PlaybooksTraining,
+            meta: {
+              title: 'Playbooks & Training',
+              description: 'Legal playbooks and training materials'
+            }
           }
         ]
       }
@@ -207,6 +268,11 @@ const routes = [
       title: 'Support Dashboard',
       description: 'View and manage support tickets'
     }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    redirect: '/'
   }
 ]
 
@@ -218,11 +284,37 @@ const router = createRouter({
   }
 })
 
+// Performance optimizations
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title
+  // Set document title
+  document.title = to.meta?.title
     ? `${to.meta.title} | Consola360`
     : 'Consola360 | Unified LegalOps Platform'
+  
   next()
+})
+
+// Preload critical routes on app startup
+router.beforeResolve(async (to) => {
+  // Preload routes marked for preloading
+  if (to.meta?.preload && to.matched.some(record => record.components?.default)) {
+    try {
+      await Promise.all(
+        to.matched.map(record => {
+          if (typeof record.components?.default === 'function') {
+            return record.components.default()
+          }
+        }).filter(Boolean)
+      )
+    } catch (error) {
+      console.warn('Route preloading failed:', error)
+    }
+  }
+})
+
+router.onError((error) => {
+  console.error('Router error:', error)
+  router.push('/')
 })
 
 export default router
