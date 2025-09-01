@@ -25,19 +25,6 @@
 
     <!-- Intake Statistics -->
     <div class="intake-stats">
-      <div class="stat-card urgent">
-        <div class="stat-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 9v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/>
-          </svg>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.urgentMatters }}</div>
-          <div class="stat-label">Urgent Matters</div>
-          <div class="stat-detail">Require immediate attention</div>
-        </div>
-      </div>
-
       <div class="stat-card pending">
         <div class="stat-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -75,57 +62,6 @@
           <div class="stat-number">{{ stats.processedThisWeek }}</div>
           <div class="stat-label">Processed This Week</div>
           <div class="stat-detail">{{ stats.avgProcessingTime }}h avg time</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- AI Triage Assistant -->
-    <div class="ai-triage-section">
-      <h4 class="section-title">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2a3 3 0 0 0-3 3c0 1.5-1.5 3-3 3s-3 1.5-3 3 1.5 3 3 3c1.5 0 3 1.5 3 3a3 3 0 0 0 6 0c0-1.5 1.5-3 3-3s3-1.5 3-3-1.5-3-3-3c-1.5 0-3-1.5-3-3a3 3 0 0 0-3-3z"/>
-        </svg>
-        AI Triage Recommendations
-      </h4>
-      <div class="triage-recommendations">
-        <div v-for="recommendation in triageRecommendations" :key="recommendation.id" class="recommendation-card">
-          <div class="recommendation-header">
-            <div class="recommendation-priority" :class="recommendation.priority">
-              {{ recommendation.priority.toUpperCase() }}
-            </div>
-            <div class="recommendation-confidence">
-              {{ recommendation.confidence }}% confidence
-            </div>
-          </div>
-          <div class="recommendation-content">
-            <h5>{{ recommendation.matterTitle }}</h5>
-            <p class="recommendation-summary">{{ recommendation.summary }}</p>
-            <div class="recommendation-details">
-              <div class="detail-item">
-                <span class="label">Suggested Action:</span>
-                <span class="value">{{ recommendation.suggestedAction }}</span>
-              </div>
-              <div class="detail-item">
-                <span class="label">Estimated Value:</span>
-                <span class="value">${{ recommendation.estimatedValue.toLocaleString() }}</span>
-              </div>
-              <div class="detail-item">
-                <span class="label">Risk Level:</span>
-                <span :class="['risk-badge', recommendation.riskLevel]">{{ recommendation.riskLevel }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="recommendation-actions">
-            <button @click="acceptRecommendation(recommendation)" class="recommendation-btn accept">
-              Accept
-            </button>
-            <button @click="reviewMatter(recommendation.matterId)" class="recommendation-btn review">
-              Review
-            </button>
-            <button @click="dismissRecommendation(recommendation)" class="recommendation-btn dismiss">
-              Dismiss
-            </button>
-          </div>
         </div>
       </div>
     </div>
