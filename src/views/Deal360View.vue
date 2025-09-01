@@ -2,7 +2,7 @@
   <div class="deal360-view page-container">
     <!-- Header -->
     <div class="view-header">
-      <h1 class="heading-primary">Deal 360</h1>
+      <h1 class="heading-primary">Deal 360°</h1>
       <div class="header-actions">
         <button @click="showNewDeal = true" class="btn btn-primary">
           <span class="icon">+</span>
@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <!-- Module Navigation Tabs -->
+    <!-- Module Navigation Tabs (Contracts tab removed) -->
     <div class="module-tabs">
       <RouterLink to="/deal360/leads" class="module-tab" active-class="active">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -28,31 +28,18 @@
           <line x1="20" y1="8" x2="20" y2="14"/>
           <line x1="23" y1="11" x2="17" y2="11"/>
         </svg>
-        Leads
-        <span class="tab-count">{{ leadsCount }}</span>
+        Leads <span class="tab-count">{{ leadsCount }}</span>
       </RouterLink>
-      
+
       <RouterLink to="/deal360/deals" class="module-tab" active-class="active">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
         </svg>
-        Deals
-        <span class="tab-count">{{ dealsCount }}</span>
-      </RouterLink>
-      
-      <RouterLink to="/deal360/contracts" class="module-tab" active-class="active">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14,2 14,8 20,8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-        </svg>
-        Contracts
-        <span class="tab-count">{{ contractsCount }}</span>
+        Deals <span class="tab-count">{{ dealsCount }}</span>
       </RouterLink>
     </div>
 
-    <!-- Summary Cards -->
+    <!-- Summary Cards (single top-level stats row) -->
     <div class="summary-cards">
       <div class="summary-card">
         <h3 class="card-title">Total Pipeline Value</h3>
@@ -76,21 +63,6 @@
       </div>
     </div>
 
-    <!-- Domino Tracker: Deal Lifecycle Stages -->
-    <div class="domino-tracker">
-      <h2 class="section-title">Deal Lifecycle Stages</h2>
-      <div class="domino-stages">
-        <div v-for="(stage, index) in dominoStages" :key="index" 
-             :class="['domino-stage', stage.status]">
-          <div class="stage-icon">{{ stage.icon }}</div>
-          <div class="stage-content">
-            <h4>{{ stage.name }}</h4>
-            <p class="stage-count">{{ stage.count }} active</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Main Content Area -->
     <div class="main-content-area">
       <RouterView />
@@ -101,7 +73,7 @@
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h2>Create New Deal</h2>
-          <button @click="showNewDeal = false" class="close-btn">✕</button>
+          <button @click="showNewDeal = false" class="close-btn">×</button>
         </div>
         <div class="modal-body">
           <form @submit.prevent="createDeal" class="new-deal-form">
@@ -117,17 +89,6 @@
               <label class="form-label">Primary Contact</label>
               <input v-model="newDealForm.contact" type="text" class="form-input" required>
             </div>
-            <div class="form-group">
-              <label class="form-label">Industry</label>
-              <select v-model="newDealForm.industry" class="form-select" required>
-                <option value="">Select industry</option>
-                <option value="technology">Technology</option>
-                <option value="healthcare">Healthcare</option>
-                <option value="finance">Finance</option>
-                <option value="retail">Retail</option>
-                <option value="manufacturing">Manufacturing</option>
-              </select>
-            </div>
             <div class="form-actions">
               <button type="button" @click="showNewDeal = false" class="btn btn-secondary">Cancel</button>
               <button type="submit" class="btn btn-primary">Create Deal</button>
@@ -137,27 +98,25 @@
       </div>
     </div>
 
-    <!-- Import Modal -->
+    <!-- Import Deals Modal -->
     <div v-if="showImportModal" class="modal-overlay" @click="showImportModal = false">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h2>Import Deals from CSV</h2>
-          <button @click="showImportModal = false" class="close-btn">✕</button>
+          <button @click="showImportModal = false" class="close-btn">×</button>
         </div>
         <div class="modal-body">
           <div class="upload-zone" @click="triggerFileUpload" @dragover.prevent @drop.prevent="handleFileDrop">
             <div class="upload-content">
-              <div class="upload-icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17,8 12,3 7,8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-              </div>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17,8 12,3 7,8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
               <h4>Upload Deals CSV</h4>
-              <p>Drag & drop your CSV file here or click to browse</p>
+              <p>Drag & drop or click to browse</p>
             </div>
-            <input ref="fileInput" type="file" accept=".csv" style="display: none" @change="handleFileSelect">
+            <input ref="fileInput" type="file" accept=".csv" style="display:none" @change="handleFileSelect">
           </div>
         </div>
       </div>
@@ -166,121 +125,153 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
-// State
-const showNewDeal = ref(false)
+const showNewDeal     = ref(false)
 const showImportModal = ref(false)
-const fileInput = ref()
+const fileInput       = ref()
 
-// Mock data
-const leadsCount = ref(45)
-const dealsCount = ref(23)
-const contractsCount = ref(12)
-const totalPipelineValue = ref(3.2)
-const activeDeals = ref(23)
-const stalledDeals = ref(3)
-const avgCycleTime = ref(44)
-const conversionRate = ref(33)
+// mock counts & metrics (removed contractsCount)
+const leadsCount        = ref(45)
+const dealsCount        = ref(23)
+const totalPipelineValue= ref(3.2)
+const activeDeals       = ref(23)
+const stalledDeals      = ref(3)
+const avgCycleTime      = ref(44)
+const conversionRate    = ref(33)
 
-const dominoStages = ref([
-  { name: 'Lead Identified', icon: '🎯', count: 45, status: 'active' },
-  { name: 'Initial Contact', icon: '📞', count: 32, status: 'active' },
-  { name: 'Deal Qualified', icon: '✅', count: 23, status: 'current' },
-  { name: 'Proposal Sent', icon: '📄', count: 18, status: 'pending' },
-  { name: 'Contract Review', icon: '🔍', count: 12, status: 'pending' },
-  { name: 'Contract Executed', icon: '✍️', count: 8, status: 'complete' }
-])
-
-// Form data
+// new deal form
 const newDealForm = ref({
   companyName: '',
   value: null,
-  contact: '',
-  industry: ''
+  contact: ''
 })
 
-// Methods
 function createDeal() {
-  // Create deal logic here
-  console.log('Creating deal:', newDealForm.value)
+  console.log('Creating deal', newDealForm.value)
   showNewDeal.value = false
-  // Reset form
-  newDealForm.value = {
-    companyName: '',
-    value: null,
-    contact: '',
-    industry: ''
-  }
+  newDealForm.value = { companyName:'', value:null, contact:'' }
 }
 
 function triggerFileUpload() {
   fileInput.value?.click()
 }
-
-function handleFileSelect(event) {
-  const file = event.target.files[0]
-  if (file) {
-    console.log('File selected:', file.name)
-    // Handle CSV processing here
-  }
+function handleFileSelect(e) {
+  console.log('File selected', e.target.files[0]?.name)
 }
-
-function handleFileDrop(event) {
-  const files = event.dataTransfer?.files
-  if (files && files[0]) {
-    console.log('File dropped:', files[0].name)
-    // Handle CSV processing here
-  }
+function handleFileDrop(e) {
+  console.log('File dropped', e.dataTransfer.files[0]?.name)
 }
 
 onMounted(() => {
-  // Load initial data
+  // load real data here
 })
 </script>
 
 <style scoped>
-.deal360-view {
-  /* Inherits from page-container */
+/* CSS Variables for consistency */
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-card: #2a2a2a;
+  --bg-secondary: #2a2a2a;
+  --border-color: #404040;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --primary-accent: #7c3aed;
+  --health-excellent: #22c55e;
+  --risk-high: #ef4444;
 }
 
+.deal360-view {
+  padding: 1rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.page-container {
+  /* Additional container styles can go here */
+}
+
+/* Header Styles */
 .view-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
+}
+
+.heading-primary {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
 }
 
 .header-actions {
   display: flex;
   gap: 1rem;
-  align-items: center;
 }
 
+/* Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary-accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #6d28d9;
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card);
+}
+
+.icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* Module Navigation */
 .module-tabs {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 2rem;
-  background: var(--bg-card);
-  padding: 0.5rem;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
 }
 
 .module-tab {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  font-weight: 500;
   border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
   text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .module-tab:hover {
@@ -291,20 +282,22 @@ onMounted(() => {
 .module-tab.active {
   background: var(--primary-accent);
   color: white;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
 }
 
 .tab-count {
-  padding: 0.25rem 0.5rem;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255,255,255,0.2);
   border-radius: 9999px;
+  padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
   font-weight: 600;
 }
 
+/* Summary Cards */
 .summary-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+  gap: 1rem;
   margin-bottom: 3rem;
 }
 
@@ -316,120 +309,47 @@ onMounted(() => {
   text-align: center;
 }
 
-.card-title {
+.card-title { 
+  color: var(--text-secondary); 
+  margin-bottom: 0.5rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.75rem;
+  font-weight: 500;
 }
 
-.metric-value {
-  font-size: 2rem;
-  font-weight: 700;
+.metric-value { 
+  font-size: 2rem; 
+  font-weight: 700; 
   color: var(--text-primary);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
 }
 
-.metric-change {
+.metric-change { 
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  font-weight: 500;
 }
 
-.metric-change.positive {
-  color: var(--health-excellent);
-}
+.metric-change.positive { color: var(--health-excellent); }
+.metric-change.negative { color: var(--risk-high); }
 
-.metric-change.negative {
-  color: var(--risk-high);
-}
-
-.domino-tracker {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 2rem;
-  margin-bottom: 3rem;
-}
-
-.section-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 1.5rem;
-}
-
-.domino-stages {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-}
-
-.domino-stage {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 2px solid var(--border-color);
-  transition: all 0.3s ease;
-}
-
-.domino-stage.active {
-  border-color: var(--secondary-accent);
-  background: rgba(16, 185, 129, 0.1);
-}
-
-.domino-stage.current {
-  border-color: var(--primary-accent);
-  background: rgba(124, 58, 237, 0.1);
-}
-
-.domino-stage.pending {
-  border-color: var(--risk-medium);
-  background: rgba(245, 158, 11, 0.1);
-}
-
-.domino-stage.complete {
-  border-color: var(--health-excellent);
-  background: rgba(34, 197, 94, 0.1);
-}
-
-.stage-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.stage-content h4 {
-  color: var(--text-primary);
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.stage-count {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-
+/* Main Content */
 .main-content-area {
+  min-height: 400px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 2rem;
-  min-height: 400px;
 }
 
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  inset: 0;
+  background: rgba(0,0,0,0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
   padding: 2rem;
+  z-index: 1000;
 }
 
 .modal-content {
@@ -446,107 +366,129 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
+  padding: 1.5rem 2rem;
   border-bottom: 1px solid var(--border-color);
 }
 
 .modal-header h2 {
-  font-size: 1.5rem;
+  margin: 0;
   color: var(--text-primary);
 }
 
-.close-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 1.5rem;
+.modal-body { 
+  padding: 2rem; 
+}
+
+.close-btn { 
+  background: none; 
+  border: none; 
+  font-size: 1.5rem; 
   cursor: pointer;
-  padding: 0.5rem;
-  line-height: 1;
+  color: var(--text-secondary);
+  padding: 0.25rem;
 }
 
 .close-btn:hover {
   color: var(--text-primary);
 }
 
-.modal-body {
-  padding: 2rem;
-}
-
+/* Form Styles */
 .new-deal-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.form-actions {
+.form-group {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
+.form-label {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-input {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-accent);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* Upload Zone */
 .upload-zone {
   border: 2px dashed var(--border-color);
   border-radius: 12px;
   padding: 3rem;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease;
 }
 
 .upload-zone:hover {
   border-color: var(--primary-accent);
-  background: rgba(124, 58, 237, 0.05);
 }
 
-.upload-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-.upload-icon {
-  color: var(--secondary-accent);
+.upload-content svg {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
 }
 
 .upload-content h4 {
+  margin-bottom: 0.5rem;
   color: var(--text-primary);
-  font-weight: 600;
 }
 
-.icon {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
+.upload-content p {
+  color: var(--text-secondary);
 }
 
-@media (max-width: 768px) {
+/* Responsive Design */
+@media (max-width: 1024px) {
   .view-header {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 1rem;
   }
 
   .header-actions {
+    width: 100%;
     justify-content: space-between;
   }
 
   .module-tabs {
     flex-direction: column;
+    gap: 0.25rem;
   }
 
   .summary-cards {
     grid-template-columns: repeat(2, 1fr);
   }
+}
 
-  .domino-stages {
+@media (max-width: 640px) {
+  .summary-cards {
     grid-template-columns: 1fr;
+  }
+  
+  .main-content-area {
+    padding: 1rem;
   }
 }
 </style>
